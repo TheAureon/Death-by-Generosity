@@ -86,8 +86,47 @@
     return pc;
   }
 
-  /** Creates the hero sprite sheet and its walk animations. */
+  /**
+   * Training dummy: a burlap sack on a wooden post with straw arms.
+   *   frame 0 = idle, frame 1 = punching (arm thrust out to the left)
+   */
+  function dummy(punching) {
+    const pc = new PixelCanvas(W, H);
+    // Post
+    pc.rect(7, 14, 2, 9, P.trunk); pc.rect(8, 14, 1, 9, P.trunkDark);
+    pc.rect(5, 22, 6, 1, P.trunkDark);
+    // Straw body
+    pc.rect(5, 11, 6, 6, P.dirtLight); pc.rect(5, 15, 6, 1, P.dirtDark); // rope belt
+    pc.px(6, 12, P.dirtDark); pc.px(9, 13, P.dirtDark);
+    // Arms (crossbar) — punching shoots the left arm out further
+    if (punching) {
+      pc.rect(0, 12, 5, 2, P.dirtLight); pc.rect(0, 11, 2, 4, P.sand); // fist
+      pc.rect(11, 11, 3, 2, P.dirtLight);
+    } else {
+      pc.rect(2, 12, 3, 2, P.dirtLight); pc.rect(11, 12, 3, 2, P.dirtLight);
+    }
+    // Sack head with stitched angry face
+    pc.circle(8, 7, 4, P.sand, 4);
+    pc.rect(5, 5, 2, 1, P.eye); pc.rect(9, 5, 2, 1, P.eye); // angry brows
+    pc.px(6, 7, P.eye); pc.px(10, 7, P.eye);
+    pc.rect(6, 9, 4, 1, P.dirtDark); pc.px(7, 10, P.dirtDark); pc.px(9, 10, P.dirtDark); // stitched mouth
+    pc.px(8, 2, P.dirtDark); // tied top
+    pc.outline(P.outline);
+    return pc;
+  }
+
+  /** Bits of straw for explosions. */
+  function straw() {
+    const pc = new PixelCanvas(3, 2);
+    pc.rect(0, 0, 3, 1, P.sand); pc.px(1, 1, P.dirtLight);
+    return pc;
+  }
+
+  /** Creates the hero/dummy sprite sheets and their animations. */
   DBG.Art.createCharacterArt = function (scene) {
+    addSpriteSheet(scene, "dummy", [dummy(false), dummy(true)]);
+    DBG.Art.addTexture(scene, "straw", straw());
+
     const frames = [];
     ["down", "up", "side"].forEach((dir) => [0, 1, 2].forEach((s) => frames.push(hero(dir, s))));
     addSpriteSheet(scene, "hero", frames);

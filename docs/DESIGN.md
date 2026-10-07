@@ -16,7 +16,7 @@ characters and objects, and y-sorting so characters walk behind trees.
 
 ## Milestones
 1. Foundation (done)
-2. The cursed hero: stats, regen, thorns, HUD, broken Esc, Save & Exit gag
+2. The cursed hero: stats, regen, thorns, HUD, broken Esc, Save & Exit gag (done)
 3. Gifting system
 4. Dumb NPC AI, combat, hazards, "gifted to death" tally
 5. Starting village (first fun test)
@@ -24,3 +24,9 @@ characters and objects, and y-sorting so characters walk behind trees.
 7. World memory and saving
 8. Regions, fast travel, gating
 9. Ending and polish
+
+## Notes
+- The hero can't die yet: HP stops at 1 ("Death politely declined"). Dying
+  for real is the ending (Milestone 9).
+- Thorns reflect the attacker's *raw* hit x thorns, so even weak attackers
+  get flattened. Thorns damage never bounces again.

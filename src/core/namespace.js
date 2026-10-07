@@ -12,11 +12,17 @@ window.DBG = {
     tiles: {},    // data/tiles.js   (what each map character means)
     maps: {},     // data/maps/*.js  (handmade text-grid maps)
     regions: [],  // data/regions.js (planned world regions)
+    hero: {},     // data/hero.js    (the player's stats)
+    creatures: {},// data/creatures.js
+    jokes: {},    // data/jokes.js   (all the funny text)
   },
   Art: {},        // src/art/*       (all generated pixel art lives here)
   World: {},      // src/world/*     (map parsing + building)
-  Entities: {},   // src/entities/*  (player, later NPCs/monsters)
+  Entities: {     // src/entities/*  (player, creatures, later NPCs)
+    behaviors: {}, // creature "behavior" name -> class that runs it
+  },
   Scenes: {},     // src/scenes/*    (Phaser scenes)
+  UI: {},         // src/ui/*        (HUD, menus, gags)
 
   /** Called by each file in data/maps/ to register a map. */
   addMap(id, map) {

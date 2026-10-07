@@ -1,7 +1,9 @@
 // ---------------------------------------------------------------------------
 // The player: the cursed, overpowered hero.
-// Milestone 1: walking with WASD / arrow keys, 8 directions, walk animation,
-// a shadow, and correct "in front of / behind" sorting with objects.
+//   - Walking with WASD / arrow keys, 8 directions, walk animation, shadow
+//   - Stats from data/hero.js: huge HP, constant regen, defense, thorns
+//   - K = punch yourself (it never works, but it's a nice way to see regen)
+// Tells the UI about health changes with game event "hero-hp".
 // ---------------------------------------------------------------------------
 (function () {
   // Standing frame for each facing (see src/art/characterArt.js)
@@ -21,17 +23,64 @@
 
       this.shadow = scene.add.image(x, y, "shadow").setOrigin(0.5, 0.6);
       this.facing = "down";
-      this.speed = DBG.data.settings.playerSpeed;
+
+      // --- Stats ---
+      const h = DBG.data.hero;
+      this.isHero = true;
+      this.alive = true;
+      this.name = h.name;
+      this.stats = { maxHp: h.maxHp, regen: h.regenPerSecond, attack: h.attack, defense: h.defense, thorns: h.thorns };
+      this.hp = h.maxHp;
+      this.speed = h.moveSpeed || DBG.data.settings.playerSpeed;
+      this.selfPunchCount = 0;
 
       const K = Phaser.Input.Keyboard.KeyCodes;
       this.keys = scene.input.keyboard.addKeys({
         up: K.W, down: K.S, left: K.A, right: K.D,
         up2: K.UP, down2: K.DOWN, left2: K.LEFT, right2: K.RIGHT,
       });
+      scene.input.keyboard.on("keydown-K", this.punchSelf, this);
+
+      this.emitHp();
     }
 
-    /** Called every frame by the scene. */
-    update() {
+    /** Damage from any source. The hero can't die yet — that's the ending. */
+    takeDamage(amount) {
+      this.hp -= amount;
+      if (this.hp < 1) {
+        this.hp = 1;
+        this.scene.game.events.emit("toast", DBG.data.jokes.deathDenied);
+      }
+      this.setTintFill(0xffffff);
+      this.scene.time.delayedCall(80, () => this.clearTint());
+      this.emitHp();
+    }
+
+    /** K: try (and fail) to end it all with a punch to the face. */
+    punchSelf() {
+      const lines = DBG.data.jokes.selfPunch;
+      this.hp = 1; // the punch works... for one frame
+      this.emitHp();
+      this.scene.cameras.main.shake(150, 0.01);
+      this.setTintFill(0xff4444);
+      this.scene.time.delayedCall(120, () => this.clearTint());
+      DBG.Combat.popNumber(this.scene, this, "-" + DBG.Combat.fmt(this.stats.maxHp - 1), DBG.Combat.COLORS.hero);
+      this.scene.game.events.emit("toast", lines[this.selfPunchCount++ % lines.length]);
+    }
+
+    emitHp() {
+      this.scene.game.events.emit("hero-hp", this.hp, this.stats.maxHp, this.stats.regen);
+    }
+
+    /** Called every frame by the scene. dt = seconds since last frame. */
+    update(dt) {
+      // --- Constant regen ---
+      if (this.hp < this.stats.maxHp) {
+        this.hp = Math.min(this.stats.maxHp, this.hp + this.stats.regen * dt);
+        this.emitHp();
+      }
+
+      // --- Movement ---
       const k = this.keys;
       let dx = 0, dy = 0;
       if (k.left.isDown || k.left2.isDown) dx -= 1;

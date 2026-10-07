@@ -6,6 +6,7 @@
 //   4. Objects  — trees, rocks, fences: standing sprites sorted by height,
 //                 so characters can walk behind them
 //   5. Walls    — invisible physics blocks for every solid tile
+//   Also lists creature spawn points (tiles with "spawn") for the scene.
 // ---------------------------------------------------------------------------
 (function () {
   // Draw order (lower = further back). Characters/objects use their y position.
@@ -19,14 +20,23 @@
     const edgeRT = scene.add.renderTexture(0, 0, pxW, pxH).setOrigin(0).setDepth(DEPTH.edges);
     const solids = scene.physics.add.staticGroup();
     const objects = [];
+    const spawns = []; // { creature, x, y } in pixels (bottom-centre of tile)
 
     // Art name of the GROUND at (x, y) — objects stand on their "ground" tile.
-    // Tiles marked "copyNeighbor" (like the player start) borrow from the left.
+    // Tiles marked "copyNeighbor" (player start, creatures) look like the
+    // most common ground among their four neighbours.
+    const plainArt = (t) => (t.object ? DBG.data.tiles[t.ground || "."].art : t.art);
     const groundArt = (x, y) => {
       const t = map.tile(x, y);
       if (!t) return null;
-      if (t.copyNeighbor) return x > 0 ? groundArt(x - 1, y) : "grass";
-      return t.object ? DBG.data.tiles[t.ground || "."].art : t.art;
+      if (!t.copyNeighbor) return plainArt(t);
+      const votes = {};
+      [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(([dx, dy]) => {
+        const n = map.tile(x + dx, y + dy);
+        if (n && !n.copyNeighbor) votes[plainArt(n)] = (votes[plainArt(n)] || 0) + 1;
+      });
+      const best = Object.keys(votes).sort((a, b) => votes[b] - votes[a])[0];
+      return best || "grass";
     };
 
     for (let y = 0; y < map.height; y++) {
@@ -50,6 +60,8 @@
             if (n !== null && n !== art) edgeRT.draw(`${art}_edge_${side}`, x * S, y * S);
           });
         }
+
+        if (tile.spawn) spawns.push({ creature: tile.spawn, x: x * S + S / 2, y: (y + 1) * S - 1 });
 
         // 4: standing objects, anchored at the bottom-centre of their tile
         if (tile.object) {
@@ -78,6 +90,6 @@
       }
     }
 
-    return { map, pixelWidth: pxW, pixelHeight: pxH, solids, objects };
+    return { map, pixelWidth: pxW, pixelHeight: pxH, solids, objects, spawns };
   };
 })();

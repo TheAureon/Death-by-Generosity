@@ -10,7 +10,12 @@ hand your best gear to NPCs and beg them to fight you. They lose. Badly.
 2. Open the unzipped folder and **double-click `index.html`**.
    It opens in your web browser (Chrome, Safari, Firefox or Edge).
 
-Controls: **W A S D** or **arrow keys** to walk.
+Controls:
+- **W A S D** or **arrow keys**: walk
+- **C**: character sheet
+- **K**: punch yourself (it doesn't work)
+- **Esc**: pause menu (it doesn't work either)
+- **Save & Exit** button, top-right (you can guess)
 
 ## Editing the game (no coding needed)
 
@@ -23,6 +28,9 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/tiles.js` | What each map character means (`#` wall, `~` water, `^` lava...) |
 | `data/maps/*.js` | The handmade maps, drawn as grids of characters |
 | `data/regions.js` | The planned world regions |
+| `data/hero.js` | The hero's name, HP, regen, defense, thorns, armour, silly stats |
+| `data/creatures.js` | Creatures like the training dummy (HP, punch strength...) |
+| `data/jokes.js` | All the funny text: Esc messages, Save & Exit failures, etc. |
 
 The data files end in `.js` rather than `.json` because browsers won't let a
 double-clicked page read separate data files. Inside, they're written in the
@@ -47,7 +55,9 @@ data/            editable content (settings, tile legend, maps, regions)
 src/core/        global namespace
 src/art/         ALL generated pixel art (swap in real art here)
 src/world/       map parsing (mapLoader) and building (worldBuilder)
-src/entities/    player (NPCs and monsters later)
+src/systems/     game rules (combat: damage, defense, thorns)
+src/entities/    player, training dummy (NPCs and monsters later)
+src/ui/          HUD pieces: health bar, messages, sheet, Esc + Save & Exit gags
 src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top)
 vendor/          Phaser engine file
 docs/            design notes
