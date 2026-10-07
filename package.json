@@ -1,0 +1,14 @@
+{
+  "name": "death-by-generosity",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A comedy top-down RPG where an overpowered hero tries to get killed by gifting gear to NPCs.",
+  "scripts": {
+    "dev": "vite --open",
+    "vendor:phaser": "node scripts/copy-phaser.cjs"
+  },
+  "devDependencies": {
+    "phaser": "3.90.0",
+    "vite": "^8.3.3"
+  }
+}
