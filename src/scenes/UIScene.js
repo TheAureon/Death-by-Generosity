@@ -1,6 +1,7 @@
 // ---------------------------------------------------------------------------
 // UIScene: everything drawn on top of the world (not zoomed, not moving):
 // health bar, area banner, controls hint, message box, character sheet,
+// inventory / gift menu,
 // and the two gags (broken Esc, Save & Exit that never works).
 // The pieces live in src/ui/.
 // ---------------------------------------------------------------------------
@@ -13,12 +14,13 @@ DBG.Scenes.UIScene = class UIScene extends Phaser.Scene {
     this.toast = new DBG.UI.Toast(this);
     this.healthBar = new DBG.UI.HealthBar(this);
     this.statsPanel = new DBG.UI.StatsPanel(this);
+    this.inventoryMenu = new DBG.UI.InventoryMenu(this);
     this.escGag = new DBG.UI.EscGag(this, this.toast);
     this.saveExit = new DBG.UI.SaveExitGag(this, this.toast);
 
     this.banner = DBG.UI.outlinedText(this, 0, 120, "", 32).setOrigin(0.5, 0).setAlpha(0);
     this.hint = DBG.UI.outlinedText(this, 16, 0,
-      "Move: WASD / Arrows    C: Character    K: Punch yourself    Esc: Pause (allegedly)", 14)
+      "Move: WASD    E: Give gift (near someone)    I: Bag    C: Character    K: Punch yourself    Esc: Pause (allegedly)", 14)
       .setOrigin(0, 1).setAlpha(0.85);
 
     this.layout();

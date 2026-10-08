@@ -18,6 +18,14 @@ DBG.data.hero = {
     "description": "Cannot be removed. You have tried. The armour has also tried. It likes you."
   },
 
+  // What's in the bag when the game starts (ids from data/items.js)
+  "startingInventory": [
+    "rusty_sword", "legendary_sword", "war_axe", "frying_pan", "wet_fish", "wizard_staff",
+    "pointy_spear", "leather_vest", "plate_armor", "wizard_robe", "iron_helm", "straw_hat",
+    "cooking_pot", "gold_crown", "round_shield", "knight_shield", "barn_door", "hero_cape"
+  ],
+  "inventorySize": 24,
+
   // Extra lines shown on the character sheet (press C). Pure comedy.
   "sheetStats": [
     ["Strength", "9,999"],

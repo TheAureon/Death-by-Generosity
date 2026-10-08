@@ -6,6 +6,8 @@
 - **Lake**: sea monsters.
 - **Plains and Forest**: generic monsters.
 - **Lava area**: lava monsters.
+- Plus the original list (owner said: add to them): **Guard Town**, **Knight
+  Fortress**, **Dragon Mountain**, **Ancient / god-tier area**.
 
 Kept in `data/regions.js`. Maps get built in later milestones.
 
@@ -17,7 +19,7 @@ characters and objects, and y-sorting so characters walk behind trees.
 ## Milestones
 1. Foundation (done)
 2. The cursed hero: stats, regen, thorns, HUD, broken Esc, Save & Exit gag (done)
-3. Gifting system
+3. Gifting system (done)
 4. Dumb NPC AI, combat, hazards, "gifted to death" tally
 5. Starting village (first fun test)
 6. Loot loop
@@ -30,3 +32,6 @@ characters and objects, and y-sorting so characters walk behind trees.
   for real is the ending (Milestone 9).
 - Thorns reflect the attacker's *raw* hit x thorns, so even weak attackers
   get flattened. Thorns damage never bounces again.
+- NPCs are drawn in layers (person + one sprite per worn item) so real art
+  can replace each piece separately. Gifting an item into a filled slot
+  hands the old item back to the hero.

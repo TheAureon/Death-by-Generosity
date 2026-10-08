@@ -126,6 +126,9 @@
   DBG.Art.createCharacterArt = function (scene) {
     addSpriteSheet(scene, "dummy", [dummy(false), dummy(true)]);
     DBG.Art.addTexture(scene, "straw", straw());
+    const spark = new PixelCanvas(2, 2);
+    spark.rect(0, 0, 2, 2, "#ffffff");
+    DBG.Art.addTexture(scene, "spark", spark); // white, so it can be tinted any colour
 
     const frames = [];
     ["down", "up", "side"].forEach((dir) => [0, 1, 2].forEach((s) => frames.push(hero(dir, s))));

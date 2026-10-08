@@ -8,5 +8,9 @@ DBG.data.regions = [
   { "id": "forest",   "name": "The Forest",      "map": null, "notes": "Generic monsters." },
   { "id": "lake",     "name": "The Lake",        "map": null, "notes": "Sea monsters." },
   { "id": "city",     "name": "Central City",    "map": null, "notes": "Medieval. True human warriors." },
-  { "id": "lava",     "name": "Lava Fields",     "map": null, "notes": "Lava monsters." }
+  { "id": "lava",     "name": "Lava Fields",     "map": null, "notes": "Lava monsters." },
+  { "id": "guardtown","name": "Guard Town",      "map": null, "notes": "Guards everywhere. Stronger opponents." },
+  { "id": "fortress", "name": "Knight Fortress", "map": null, "notes": "Knights. Bigger hazards." },
+  { "id": "dragon",   "name": "Dragon Mountain", "map": null, "notes": "A dragon. Probably also loses." },
+  { "id": "ancient",  "name": "The Ancient Realm","map": null, "notes": "God-tier area. Last hope for dying." }
 ];

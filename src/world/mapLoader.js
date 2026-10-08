@@ -12,7 +12,13 @@
   DBG.World.loadMap = function (mapId) {
     const raw = DBG.data.maps[mapId];
     if (!raw) throw new Error(`Map "${mapId}" not found. Is its file listed in index.html?`);
-    const legend = DBG.data.tiles;
+    // A map can add its own characters (e.g. "1": { "npc": "bob" }) on top
+    // of the shared legend in data/tiles.js.
+    const legend = { ...DBG.data.tiles };
+    Object.entries(raw.legend || {}).forEach(([ch, entry]) => {
+      // People and creatures blend into the ground around them
+      legend[ch] = entry.npc || entry.spawn ? { copyNeighbor: true, ...entry } : entry;
+    });
 
     // Drop blank lines at the top/bottom, keep everything else exactly.
     const lines = raw.grid.replace(/\r/g, "").split("\n");

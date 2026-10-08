@@ -12,6 +12,8 @@ hand your best gear to NPCs and beg them to fight you. They lose. Badly.
 
 Controls:
 - **W A S D** or **arrow keys**: walk
+- **E** (or Space) next to someone: give them a gift
+- **I**: look in your bag
 - **C**: character sheet
 - **K**: punch yourself (it doesn't work)
 - **Esc**: pause menu (it doesn't work either)
@@ -31,6 +33,11 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/hero.js` | The hero's name, HP, regen, defense, thorns, armour, silly stats |
 | `data/creatures.js` | Creatures like the training dummy (HP, punch strength...) |
 | `data/jokes.js` | All the funny text: Esc messages, Save & Exit failures, etc. |
+| `data/items.js` | Every item: name, slot, stats, colours/shape, description |
+| `data/npcs.js` | People: name, colours, stats, greeting, what they say about gifts |
+
+**Placing NPCs on a map:** in the map file, add a `"legend"` entry like
+`"1": { "npc": "bob" }`, then put a `1` in the grid where they should stand.
 
 The data files end in `.js` rather than `.json` because browsers won't let a
 double-clicked page read separate data files. Inside, they're written in the
@@ -55,9 +62,10 @@ data/            editable content (settings, tile legend, maps, regions)
 src/core/        global namespace
 src/art/         ALL generated pixel art (swap in real art here)
 src/world/       map parsing (mapLoader) and building (worldBuilder)
-src/systems/     game rules (combat: damage, defense, thorns)
-src/entities/    player, training dummy (NPCs and monsters later)
-src/ui/          HUD pieces: health bar, messages, sheet, Esc + Save & Exit gags
+src/systems/     game rules (combat + thorns, inventory, gifting)
+src/entities/    player, training dummy, NPCs (drawn in gear layers)
+src/ui/          HUD pieces: health bar, messages, speech bubbles, bag/gift
+                 menu, character sheet, Esc + Save & Exit gags
 src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top)
 vendor/          Phaser engine file
 docs/            design notes

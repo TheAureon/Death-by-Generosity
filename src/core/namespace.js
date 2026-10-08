@@ -15,7 +15,10 @@ window.DBG = {
     hero: {},     // data/hero.js    (the player's stats)
     creatures: {},// data/creatures.js
     jokes: {},    // data/jokes.js   (all the funny text)
+    items: {},    // data/items.js   (everything that can be carried/given)
+    npcs: {},     // data/npcs.js    (people you can give gifts to)
   },
+  state: {},      // live game state (inventory...), set up in BootScene
   Art: {},        // src/art/*       (all generated pixel art lives here)
   World: {},      // src/world/*     (map parsing + building)
   Entities: {     // src/entities/*  (player, creatures, later NPCs)

@@ -6,7 +6,7 @@
 //   4. Objects  — trees, rocks, fences: standing sprites sorted by height,
 //                 so characters can walk behind them
 //   5. Walls    — invisible physics blocks for every solid tile
-//   Also lists creature spawn points (tiles with "spawn") for the scene.
+//   Also lists spawn points for creatures ("spawn") and NPCs ("npc").
 // ---------------------------------------------------------------------------
 (function () {
   // Draw order (lower = further back). Characters/objects use their y position.
@@ -20,7 +20,7 @@
     const edgeRT = scene.add.renderTexture(0, 0, pxW, pxH).setOrigin(0).setDepth(DEPTH.edges);
     const solids = scene.physics.add.staticGroup();
     const objects = [];
-    const spawns = []; // { creature, x, y } in pixels (bottom-centre of tile)
+    const spawns = []; // { creature | npc, x, y } in pixels (bottom-centre of tile)
 
     // Art name of the GROUND at (x, y) — objects stand on their "ground" tile.
     // Tiles marked "copyNeighbor" (player start, creatures) look like the
@@ -62,6 +62,7 @@
         }
 
         if (tile.spawn) spawns.push({ creature: tile.spawn, x: x * S + S / 2, y: (y + 1) * S - 1 });
+        if (tile.npc) spawns.push({ npc: tile.npc, x: x * S + S / 2, y: (y + 1) * S - 2 });
 
         // 4: standing objects, anchored at the bottom-centre of their tile
         if (tile.object) {
