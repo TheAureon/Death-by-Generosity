@@ -17,6 +17,7 @@ window.DBG = {
     jokes: {},    // data/jokes.js   (all the funny text)
     items: {},    // data/items.js   (everything that can be carried/given)
     npcs: {},     // data/npcs.js    (people you can give gifts to)
+    recipes: [],  // data/recipes.js (what the forge can make)
   },
   state: {},      // live game state (inventory, tally...), set up in BootScene
   Art: {},        // src/art/*       (all generated pixel art lives here)

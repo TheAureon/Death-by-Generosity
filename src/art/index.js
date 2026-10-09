@@ -8,6 +8,7 @@ DBG.Art.createAll = function (scene) {
   DBG.Art.createVillageArt(scene);
   DBG.Art.createCharacterArt(scene);
   DBG.Art.createPeopleArt(scene);
+  DBG.Art.createMonsterArt(scene);
 
   // Looping animations for animated tiles (water ripples, lava bubbles)
   Object.entries(DBG.Art.animatedTiles).forEach(([key, fps]) => {

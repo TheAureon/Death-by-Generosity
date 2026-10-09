@@ -2,6 +2,8 @@
 // ITEMS — everything the hero can carry and give away.
 //
 //   "slot"  : where it's worn: weapon, armor, helmet, shield, cape
+//             ("material" = monster bits for crafting; can't be worn)
+//   "stack" : true = many of them share one bag slot
 //   "stats" : what it adds to whoever wears it (attack, defense, maxHp, speed)
 //   "art"   : how it's drawn. "type" picks the shape (see the list below),
 //             "color" is the main colour, "trim" the second colour.
@@ -11,6 +13,7 @@
 //          helmet: helm, hat, crown, pot, tophat
 //          shield: round, kite, door
 //          cape  : cape
+//          material: goo, feather, hide, tusk
 // ===========================================================================
 DBG.data.items = {
   "rusty_sword": {
@@ -127,6 +130,60 @@ DBG.data.items = {
     "stats": { "defense": 200, "speed": -20 },
     "description": "Somewhere, a barn is very cold right now."
   },
+  // ---- Crafted at Brunhilde's forge (see data/recipes.js) ----
+  "goo_sword": {
+    "name": "Sticky Sword", "slot": "weapon",
+    "art": { "type": "sword", "color": "#6dd36d", "trim": "#3f8f3a" },
+    "stats": { "attack": 35 },
+    "description": "Made of slime. Very sharp. Very sticky. Do not lick."
+  },
+  "slime_shield": {
+    "name": "Slime Shield", "slot": "shield",
+    "art": { "type": "round", "color": "#6dd36d", "trim": "#3f8f3a" },
+    "stats": { "defense": 45 },
+    "description": "Arrows bounce off. So do friends."
+  },
+  "feather_cape": {
+    "name": "Goose Down Cape", "slot": "cape",
+    "art": { "type": "cape", "color": "#f4f1e8", "trim": "#d8d8e0" },
+    "stats": { "speed": 20, "maxHp": 30 },
+    "description": "Incredibly fluffy. Occasionally honks."
+  },
+  "hide_armor": {
+    "name": "Boar Hide Armour", "slot": "armor",
+    "art": { "type": "leather", "color": "#6b4428", "trim": "#c99560" },
+    "stats": { "defense": 60, "speed": -5 },
+    "description": "Heavy, warm, and it still smells angry."
+  },
+  "tusk_spear": {
+    "name": "Tusk Spear", "slot": "weapon",
+    "art": { "type": "spear", "color": "#f4f1e8", "trim": "#7a5232" },
+    "stats": { "attack": 90 },
+    "description": "Pointy at one end. Gooey at the other."
+  },
+
+  // ---- Monster bits (dropped in the Plains) ----
+  "slime_goo": {
+    "name": "Slime Goo", "slot": "material", "stack": true,
+    "art": { "type": "goo", "color": "#6dd36d", "trim": "#3f8f3a" },
+    "description": "Wobbly. Warm. Why is it warm?"
+  },
+  "goose_feather": {
+    "name": "Goose Feather", "slot": "material", "stack": true,
+    "art": { "type": "feather", "color": "#f4f1e8", "trim": "#d8d8e0" },
+    "description": "Still angry, somehow."
+  },
+  "boar_hide": {
+    "name": "Boar Hide", "slot": "material", "stack": true,
+    "art": { "type": "hide", "color": "#8a5a2b", "trim": "#6b4428" },
+    "description": "Tough leather. The boar would like it back."
+  },
+  "boar_tusk": {
+    "name": "Boar Tusk", "slot": "material", "stack": true,
+    "art": { "type": "tusk", "color": "#f4f1e8", "trim": "#d8d0b8" },
+    "description": "A very pointy tooth. Good for spears."
+  },
+
   "hero_cape": {
     "name": "Spare Hero Cape", "slot": "cape",
     "art": { "type": "cape", "color": "#c8323c", "trim": "#8e1f2a" },

@@ -266,8 +266,32 @@
     return frames;
   }
 
+  /** Icons for crafting materials (not worn, so drawn directly). */
+  function materialIcon(art) {
+    const pc = new PixelCanvas(16, 16);
+    const c = art.color, t = art.trim;
+    switch (art.type) {
+      case "goo":
+        pc.circle(8, 10, 6, t, 4); pc.circle(8, 9, 5.5, c, 3.5); pc.px(6, 8, "#ffffff"); pc.px(10, 6, c); pc.px(10, 5, c);
+        break;
+      case "feather":
+        for (let i = 0; i < 11; i++) pc.px(3 + i, 13 - i, t);
+        for (let i = 1; i < 10; i++) { pc.rect(4 + i, 11 - i, 2, 1, c); pc.rect(4 + i - 1, 12 - i, 1, 2, c); }
+        break;
+      case "hide":
+        pc.rect(3, 4, 10, 8, c); pc.rect(2, 5, 12, 6, c); pc.rect(5, 6, 6, 3, t); pc.px(2, 4, c); pc.px(13, 11, c);
+        break;
+      case "tusk":
+        for (let i = 0; i < 9; i++) pc.rect(4 + Math.floor(i * 0.8), 12 - i, 3 - Math.floor(i / 4), 1, i < 2 ? t : c);
+        break;
+    }
+    pc.outline(P.outline);
+    return pc;
+  }
+
   /** Item icon: the standing gear picture cropped to 16x16. */
   function icon(item) {
+    if (item.slot === "material") return materialIcon(item.art);
     const g = gearFrame(item, "down", 0);
     let minX = 99, minY = 99, maxX = -1, maxY = -1;
     for (let y = 0; y < g.height; y++) for (let x = 0; x < g.width; x++) {
@@ -292,7 +316,7 @@
       addSpriteSheet(scene, "npc_" + id, allFrames((dir, s) => person(npc.look, dir, s)));
     });
     Object.entries(DBG.data.items || {}).forEach(([id, item]) => {
-      addSpriteSheet(scene, "gear_" + id, allFrames((dir, s) => gearFrame(item, dir, s)));
+      if (item.slot !== "material") addSpriteSheet(scene, "gear_" + id, allFrames((dir, s) => gearFrame(item, dir, s)));
       addTexture(scene, "icon_" + id, icon(item));
     });
   };

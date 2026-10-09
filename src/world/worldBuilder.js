@@ -7,7 +7,8 @@
 //                 so characters can walk behind them
 //   5. Blocks   — invisible physics blocks: walls, and hazards (separate,
 //                 so fighting NPCs can fall into hazards)
-//   Also lists spawn points for creatures ("spawn") and NPCs ("npc").
+//   Also lists spawn points for creatures ("spawn"), NPCs ("npc") and
+//   arrival spots where the hero appears when coming from another map.
 // ---------------------------------------------------------------------------
 (function () {
   // Draw order (lower = further back). Characters/objects use their y position.
@@ -22,7 +23,7 @@
     const walls = scene.physics.add.staticGroup();   // block everyone
     const hazards = scene.physics.add.staticGroup(); // block the hero + calm NPCs
     const objects = [];
-    const spawns = []; // { creature | npc, x, y } in pixels (bottom-centre of tile)
+    const spawns = []; // { creature | npc | arrival, x, y } in pixels (bottom-centre of tile)
 
     // Art name of the GROUND at (x, y) — objects stand on their "ground" tile.
     // Tiles marked "copyNeighbor" (player start, creatures) look like the
@@ -65,6 +66,7 @@
 
         if (tile.spawn) spawns.push({ creature: tile.spawn, x: x * S + S / 2, y: (y + 1) * S - 1 });
         if (tile.npc) spawns.push({ npc: tile.npc, x: x * S + S / 2, y: (y + 1) * S - 2 });
+        if (tile.arrival) spawns.push({ arrival: tile.arrival, x: x * S + S / 2, y: (y + 1) * S - 2 });
 
         // 4: standing objects, anchored at the bottom-centre of their tile
         if (tile.object) {

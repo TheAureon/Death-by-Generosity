@@ -22,7 +22,7 @@ characters and objects, and y-sorting so characters walk behind trees.
 3. Gifting system (done)
 4. Dumb NPC AI, combat, hazards, "gifted to death" tally (done)
 5. Starting village (first fun test)
-6. Loot loop
+6. Loot loop (done)
 7. World memory and saving
 8. Regions, fast travel, gating
 9. Ending and polish
@@ -53,3 +53,12 @@ characters and objects, and y-sorting so characters walk behind trees.
 | Sir Reginald | Pond dock, east | Heroic charge... the wrong way, into the pond |
 | Mayor Humphrey | Town square | Gives a speech while backing into the well |
 Brunhilde, Reginald and the Mayor start with gear, so they'll fight right away.
+
+## Loot loop
+- The Plains (south of the village): Slimes, Blue Slimes, Angry Geese,
+  Grumpy Boars. They attack the hero and usually die to thorns, so you can
+  farm by standing still. They respawn at their spot.
+- Drops: monster bits (stack in the bag) and rare gear.
+- Brunhilde forges bits into gear (data/recipes.js), so there is always
+  something to give away.
+- Known gap until Milestone 7: leaving a map resets it (villagers lose gifts).

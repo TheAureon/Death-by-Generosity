@@ -24,7 +24,7 @@ DBG.data.hero = {
     "pointy_spear", "leather_vest", "plate_armor", "wizard_robe", "iron_helm", "straw_hat",
     "cooking_pot", "gold_crown", "round_shield", "knight_shield", "barn_door", "hero_cape"
   ],
-  "inventorySize": 24,
+  "inventorySize": 32,
 
   // Extra lines shown on the character sheet (press C). Pure comedy.
   "sheetStats": [

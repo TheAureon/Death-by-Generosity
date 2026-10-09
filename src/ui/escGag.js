@@ -19,6 +19,7 @@ DBG.UI.EscGag = class EscGag {
     // Esc can't close menus properly... but it can kill them. Same result.
     if (s.inventoryMenu) s.inventoryMenu.close();
     if (s.choiceMenu) s.choiceMenu.close();
+    if (s.craftMenu) s.craftMenu.close();
     const W = s.scale.width, H = s.scale.height;
     s.scene.pause("World");
 

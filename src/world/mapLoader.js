@@ -17,7 +17,7 @@
     const legend = { ...DBG.data.tiles };
     Object.entries(raw.legend || {}).forEach(([ch, entry]) => {
       // People and creatures blend into the ground around them
-      legend[ch] = entry.npc || entry.spawn ? { copyNeighbor: true, ...entry } : entry;
+      legend[ch] = entry.npc || entry.spawn || entry.arrival ? { copyNeighbor: true, ...entry } : entry;
     });
 
     // Drop blank lines at the top/bottom, keep everything else exactly.
@@ -41,10 +41,13 @@
       });
     });
 
-    if (!playerStart) {
+    // Maps you only reach through exits don't need a "P" (they use arrivals)
+    const hasArrivals = Object.values(raw.legend || {}).some((e) => e.arrival);
+    if (!playerStart && !hasArrivals) {
       console.warn(`Map "${mapId}" has no "P" start tile. Starting in the middle.`);
       playerStart = { x: Math.floor(width / 2), y: Math.floor(height / 2) };
     }
+    if (!playerStart) playerStart = { x: Math.floor(width / 2), y: Math.floor(height / 2) };
 
     return {
       id: mapId,

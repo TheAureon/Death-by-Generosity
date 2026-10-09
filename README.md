@@ -36,8 +36,12 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/jokes.js` | All the funny text: Esc messages, Save & Exit failures, etc. |
 | `data/items.js` | Every item: name, slot, stats, colours/shape, description |
 | `data/npcs.js` | People: name, colours, stats, lines, and their silly fighting "quirks" |
+| `data/creatures.js` | Monsters: stats, loot drops, how they move, respawn time |
+| `data/recipes.js` | What Brunhilde can forge from monster bits |
 
-**Switching maps:** the game starts in the village (`data/maps/village.js`).
+**Maps:** the game starts in the village (`data/maps/village.js`); the road
+south leads to the Plains (`data/maps/plains.js`). Exits are tiles with
+`"exit"` (which map) and `"arrive"` (which arrival spot) in a map's legend.
 To play the old test map, change `"startMap"` in `data/settings.js` to
 `"test_meadow"`.
 
@@ -70,9 +74,10 @@ src/world/       map parsing (mapLoader) and building (worldBuilder)
 src/systems/     game rules (combat + thorns, inventory, gifting, hazards)
 src/ai/          fightBrain: how NPCs fight (badly)
 src/entities/    player, training dummy, NPCs (drawn in gear layers),
-                 chickens, dropped items
+                 monsters, chickens, dropped items
 src/ui/          HUD pieces: health bar, tally, messages, speech bubbles,
-                 talk menu, bag/gift menu, character sheet, Esc + Save & Exit gags
+                 talk menu, bag/gift menu, forge (crafting) menu, character sheet,
+                 Esc + Save & Exit gags
 src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top)
 vendor/          Phaser engine file
 docs/            design notes

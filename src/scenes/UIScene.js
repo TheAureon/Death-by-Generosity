@@ -15,6 +15,7 @@ DBG.Scenes.UIScene = class UIScene extends Phaser.Scene {
     this.healthBar = new DBG.UI.HealthBar(this);
     this.statsPanel = new DBG.UI.StatsPanel(this);
     this.inventoryMenu = new DBG.UI.InventoryMenu(this);
+    this.craftMenu = new DBG.UI.CraftMenu(this);
     this.choiceMenu = new DBG.UI.ChoiceMenu(this, this.inventoryMenu);
     this.tally = new DBG.UI.Tally(this);
     this.escGag = new DBG.UI.EscGag(this, this.toast);

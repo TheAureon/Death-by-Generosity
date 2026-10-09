@@ -93,6 +93,13 @@ DBG.data.jokes = {
   // When someone respawns after dying ({name})
   "respawn": ["A suspiciously similar {name} moves in.", "{name} is back. Nobody asks questions.", "{name}'s identical cousin arrives."],
 
+  // Crafting at the forge ({item}, {name} = the smith)
+  "crafted": "{name} forged a {item}! It's still glowing. Don't touch it. Or do.",
+  "craftMissing": "Not enough monster bits for the {item}. Go bully some wildlife.",
+
+  // Trying to gift a crafting material
+  "cantGiftMaterial": "You can't wear monster goo. Well, you CAN. But don't. Take it to Brunhilde's forge.",
+
   // Picking up dropped gear ({item})
   "pickup": "Got the {item} back. Still warm.",
   "bagFull": "Your bag is full. The {item} stays on the ground."

@@ -19,6 +19,7 @@
 //                   Their SIGNATURE failure gets the biggest number.
 //   "seekHazard"  : which hazard the seekHazard quirk walks into
 //                   (forge, well, water, lava, pit, cliff)
+//   "crafter"     : true = can forge items from monster bits (data/recipes.js)
 //   "quirkLines"  : their own lines for a quirk (instead of the shared ones
 //                   in data/jokes.js). backpedal uses them as a speech.
 // ===========================================================================
@@ -103,6 +104,7 @@ DBG.data.npcs = {
     "swapLine": "Take the old {item}. I'll make another.",
     "fightStart": "Alright, hero. Let's see what that armour's made of.",
     "refuseFight": "Fight with my bare hands? I need those for work.",
+    "crafter": true,
     "quirks": { "seekHazard": 6, "attack": 1 },
     "seekHazard": "forge",
     "quirkLines": {

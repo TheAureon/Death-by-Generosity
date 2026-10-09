@@ -24,7 +24,7 @@ DBG.UI.InventoryMenu = class InventoryMenu {
     ["Q", "BACKSPACE"].forEach((key) => k.on("keydown-" + key, when(() => this.close())));
     k.on("keydown-I", () => {
       if (this.root) { if (this.mode === "view") this.close(); }
-      else if (!scene.choiceMenu || !scene.choiceMenu.isOpen) this.open("view");
+      else if (!(scene.choiceMenu && scene.choiceMenu.isOpen) && !(scene.craftMenu && scene.craftMenu.isOpen)) this.open("view");
     });
 
     const onOpenGift = (npc) => this.open("gift", npc);
@@ -65,7 +65,11 @@ DBG.UI.InventoryMenu = class InventoryMenu {
       const zone = add(s.add.zone(x, y, this.cell - 4, this.cell - 4).setOrigin(0).setInteractive({ useHandCursor: true }));
       zone.on("pointerdown", () => { if (this.selected === i) this.confirm(); else this.select(i); });
       if (!id) return null;
-      return add(s.add.image(x + this.cell / 2 - 2, y + this.cell / 2 - 2, "icon_" + id).setScale(3));
+      const icon = add(s.add.image(x + this.cell / 2 - 2, y + this.cell / 2 - 2, "icon_" + id).setScale(3));
+      // Stacked monster bits show how many you have
+      const n = inv.getCount(i);
+      if (n > 1) add(DBG.UI.outlinedText(s, x + this.cell - 6, y + this.cell - 6, String(n), 14).setOrigin(1, 1));
+      return icon;
     });
 
     // Details of the selected item
@@ -129,6 +133,9 @@ DBG.UI.InventoryMenu = class InventoryMenu {
 
   /** "+40 ATK  -5 SPD  (weapon) — replaces Rusty Sword" */
   statLine(item) {
+    if (item.slot === "material") {
+      return "Crafting material — Brunhilde at the forge can turn these into gear";
+    }
     const labels = { attack: "ATK", defense: "DEF", maxHp: "HP", speed: "SPD" };
     const parts = Object.entries(item.stats || {}).map(([k, v]) => `${v > 0 ? "+" : ""}${v} ${labels[k] || k}`);
     let line = `${parts.join("  ") || "No stats"}   (${item.slot})`;
@@ -160,7 +167,12 @@ DBG.UI.InventoryMenu = class InventoryMenu {
   confirm() {
     if (this.mode !== "gift") return;
     const i = this.selected;
-    if (!DBG.state.inventory.get(i)) return;
+    const id = DBG.state.inventory.get(i);
+    if (!id) return;
+    if (DBG.data.items[id].slot === "material") {
+      this.descText.setText(DBG.data.jokes.cantGiftMaterial);
+      return;
+    }
     const npc = this.npc;
     this.close();
     this.scene.game.events.emit("gift-chosen", npc, i);

@@ -7,7 +7,7 @@
 //   West       : Grandma Gertrude's house and flower garden
 //   South-west : Kevin's house, the cliff % and the old mine shaft o
 //   East       : the pond and the dock _ where Sir Reginald keeps watch
-//   South      : the road out (closed for now — Milestone 8)
+//   South      : the road to the Plains (@ = exit, & = where you arrive back)
 //
 // Each character is one tile (see data/tiles.js). Numbers are villagers,
 // C is a chicken, P is where the hero starts. Edit freely!
@@ -23,7 +23,11 @@ DBG.addMap("village", {
     "4": { "npc": "brunhilde" },
     "5": { "npc": "reginald" },
     "6": { "npc": "mayor" },
-    "C": { "spawn": "pen_chicken" }
+    "C": { "spawn": "pen_chicken" },
+    "@": { "name": "Road south", "art": "path", "exit": "plains", "arrive": "fromVillage" },
+    "&": { "arrival": "fromPlains" },
+    "!": { "name": "Signpost", "art": "signpost", "solid": true, "object": true, "ground": ".",
+           "sign": "SOUTH: The Plains. Slimes, geese and boars. Great place to farm loot!" }
   },
 
   "grid": `
@@ -64,10 +68,10 @@ TT..B................3.......==...T.......................TT
 TT.......,...................==...........................TT
 TT......%%%%%%%%%%%%%%%%%%...==...........................TT
 TT....,.%%%%%%%%%%%%%%%%%%...==..,......T...........T.....TT
-TT..,..,...roo.......,.......==.!.........................TT
+TT..,..,...roo.......,.......&=.!.........................TT
 TT...,T,.,..oo...B...........==.....r.........T.......,.T.TT
 TT......,.....r..............==,..........,...............TT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTffffTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTf@@fTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTT@@TTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 `
 });

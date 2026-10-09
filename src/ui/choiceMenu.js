@@ -2,6 +2,7 @@
 // Talk menu: opened by pressing E next to someone (game event "talk-to").
 //   Give a gift      -> opens the gift menu
 //   Please fight me  -> asks them to fight (game event "fight-request")
+//   Forge something  -> crafting menu (only for crafters, like Brunhilde)
 //   Never mind
 // Controls: W/S or arrows to choose, E/Enter/Space to pick, Q to close.
 // The world pauses while it's open.
@@ -29,7 +30,7 @@ DBG.UI.ChoiceMenu = class ChoiceMenu {
   }
 
   open(npc) {
-    if (this.root || this.inventoryMenu.isOpen) return;
+    if (this.root || this.inventoryMenu.isOpen || (this.scene.craftMenu && this.scene.craftMenu.isOpen)) return;
     const s = this.scene;
     this.npc = npc;
     this.openedAt = s.time.now;
@@ -41,6 +42,8 @@ DBG.UI.ChoiceMenu = class ChoiceMenu {
       { label: gifted ? "Please fight me" : "Please fight me (they have nothing)", action: "fight" },
       { label: "Never mind", action: "close" },
     ];
+    // Crafters (Brunhilde) can also forge things from monster bits
+    if (npc.def.crafter) this.options.splice(2, 0, { label: "Forge something (crafting)", action: "craft" });
     const w = 420, h = 90 + this.options.length * 44;
     const root = DBG.UI.panel(s, Math.round((s.scale.width - w) / 2), s.scale.height - h - 60, w, h).setDepth(860);
     root.add(DBG.UI.text(s, w / 2, 20, npc.name, 20).setOrigin(0.5, 0));
@@ -70,6 +73,7 @@ DBG.UI.ChoiceMenu = class ChoiceMenu {
     this.close();
     if (choice.action === "gift") this.inventoryMenu.open("gift", npc);
     if (choice.action === "fight") this.scene.game.events.emit("fight-request", npc);
+    if (choice.action === "craft") this.scene.craftMenu.open(npc);
   }
 
   close() {

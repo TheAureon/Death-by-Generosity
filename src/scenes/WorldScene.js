@@ -6,6 +6,8 @@
 // (give a gift / please fight me) and tells us what was picked.
 // Deaths: NPCs announce "npc-died"; we count it, drop their gear, and bring
 // a "suspiciously similar" replacement back later.
+// Monsters drop loot and respawn. Exit tiles lead to other maps; the scene
+// restarts with { mapId, arrival } and the hero appears at that arrival spot.
 // ---------------------------------------------------------------------------
 DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
   constructor() {
@@ -20,9 +22,12 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     // Keep everything inside the map
     this.physics.world.setBounds(0, 0, this.world.pixelWidth, this.world.pixelHeight);
 
-    // Spawn the hero standing on the "P" tile
+    // Spawn the hero at the arrival spot (coming from another map) or on "P"
+    const arrival = data.arrival && this.world.spawns.find((s) => s.arrival === data.arrival);
     const start = this.map.playerStart;
-    this.player = new DBG.Entities.Player(this, start.x * S + S / 2, start.y * S + S - 2);
+    if (arrival) this.player = new DBG.Entities.Player(this, arrival.x, arrival.y);
+    else this.player = new DBG.Entities.Player(this, start.x * S + S / 2, start.y * S + S - 2);
+    this.leaving = false;
     this.physics.add.collider(this.player, [this.world.walls, this.world.hazards]);
 
     // Creatures placed on the map (data/creatures.js)
@@ -30,8 +35,13 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
       const data = DBG.data.creatures[s.creature];
       const Behavior = data && DBG.Entities.behaviors[data.behavior];
       if (!Behavior) { console.warn(`Unknown creature "${s.creature}"`); return null; }
-      return new Behavior(this, s.x, s.y, data);
+      return new Behavior(this, s.x, s.y, data, s.creature);
     }).filter(Boolean);
+
+    // Monsters move and fight, so they get their own list and colliders
+    this.monsters = this.creatures.filter((c) => c instanceof DBG.Entities.Monster);
+    this.creatures = this.creatures.filter((c) => !(c instanceof DBG.Entities.Monster));
+    this.physics.add.collider(this.monsters, [this.world.walls, this.world.hazards]);
 
     // NPCs placed on the map (data/npcs.js). This array is changed in place
     // when people die and respawn, so the colliders below keep working.
@@ -68,14 +78,22 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     };
     listen("gift-chosen", this.onGiftChosen);
     listen("fight-request", this.onFightRequest);
+    // Our own scene events (removed on shutdown, so map changes don't double them)
     this.events.on("npc-died", this.onNpcDied, this);
     this.events.on("hero-strike", this.onHeroStrike, this);
+    this.events.on("monster-died", this.onMonsterDied, this);
+    this.events.once("shutdown", () => {
+      this.events.off("npc-died", this.onNpcDied, this);
+      this.events.off("hero-strike", this.onHeroStrike, this);
+      this.events.off("monster-died", this.onMonsterDied, this);
+    });
 
     // Camera: follow smoothly, never show past the map edges, crisp zoom
     const cam = this.cameras.main;
     cam.setBounds(0, 0, this.world.pixelWidth, this.world.pixelHeight);
     cam.startFollow(this.player, true, 0.15, 0.15);
     cam.setRoundPixels(true);
+    cam.fadeIn(300);
     this.applyZoom();
     this.scale.on("resize", this.applyZoom, this);
     this.events.once("shutdown", () => this.scale.off("resize", this.applyZoom, this));
@@ -110,9 +128,21 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
 
   interact() {
     const npc = this.nearestNPC();
-    if (!npc) return;
+    if (!npc) return this.readSign();
     npc.face(this.player);
     this.game.events.emit("talk-to", npc);
+  }
+
+  /** E next to a signpost (a tile with "sign" text) reads it. */
+  readSign() {
+    const S = DBG.data.settings.tileSize;
+    const px = Math.floor(this.player.x / S), py = Math.floor((this.player.y - 2) / S);
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        const t = this.map.tile(px + dx, py + dy);
+        if (t && t.sign) return this.game.events.emit("toast", t.sign);
+      }
+    }
   }
 
   onGiftChosen(npc, inventoryIndex) {
@@ -138,6 +168,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     });
     this.creatures.filter(inRange).forEach((c) => c.takeDamage(hit.damage, this.player, "hero"));
     this.chickens.filter(inRange).forEach((c) => c.takeDamage());
+    this.monsters.filter(inRange).forEach((m) => m.takeDamage(hit.damage, this.player, "hero"));
     if (flattenedSomeone) this.game.events.emit("wasted");
   }
 
@@ -170,6 +201,35 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     });
   }
 
+  /** A monster died: scatter its loot and bring a new one back later. */
+  onMonsterDied(mon) {
+    DBG.Entities.Monster.rollLoot(mon.def.drops).forEach((itemId) => {
+      const p = DBG.Entities.ItemPickup.drop(this, mon.x, mon.y, itemId);
+      p.isLoot = true;
+      this.pickups.push(p);
+    });
+    const idx = this.monsters.indexOf(mon);
+    if (idx >= 0) this.monsters.splice(idx, 1);
+    this.time.delayedCall((mon.def.respawnSeconds || 10) * 1000, () => {
+      this.monsters.push(new DBG.Entities.Monster(this, mon.home.x, mon.home.y, mon.def, mon.kind));
+    });
+  }
+
+  /** Walk onto an exit tile: fade out and load the map it leads to. */
+  checkExit() {
+    if (this.leaving) return;
+    const S = DBG.data.settings.tileSize;
+    const t = this.map.tile(Math.floor(this.player.x / S), Math.floor((this.player.y - 2) / S));
+    if (!t || !t.exit) return;
+    if (!DBG.data.maps[t.exit]) return console.warn(`Exit leads to unknown map "${t.exit}"`);
+    this.leaving = true;
+    this.player.setVelocity(0, 0);
+    this.cameras.main.fadeOut(300, 0, 0, 0);
+    this.cameras.main.once("camerafadeoutcomplete", () => {
+      this.scene.restart({ mapId: t.exit, arrival: t.arrive });
+    });
+  }
+
   /** Called by a FightBrain: a chicken appears and runs from `chaser`. */
   spawnChicken(x, y, chaser) {
     // Put it on walkable ground so it doesn't start inside a wall
@@ -185,7 +245,10 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
 
   update(time, deltaMs) {
     const dt = Math.min(deltaMs / 1000, 0.1); // seconds; capped after tab switches
+    if (this.leaving) return;
     this.player.update(dt);
+    this.checkExit();
+    this.monsters.slice().forEach((m) => m.update(dt, this.player));
     this.creatures.forEach((c) => c.update(dt, this.player));
     const target = this.nearestNPC();
     this.npcs.slice().forEach((n) => n.update(dt, this.player, n === target)); // in reach = stand still
