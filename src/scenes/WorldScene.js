@@ -45,7 +45,9 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     this.physics.add.collider(this.npcs, this.world.hazards, null, (npc) => npc.mode === "calm");
     this.physics.add.collider(this.player, this.npcs, null, (p, npc) => npc.alive);
 
-    this.chickens = [];
+    // Chickens placed on the map live with the other chickens (they move)
+    this.chickens = this.creatures.filter((c) => c instanceof DBG.Entities.Chicken);
+    this.creatures = this.creatures.filter((c) => !(c instanceof DBG.Entities.Chicken));
     this.pickups = [];
     this.physics.add.collider(this.chickens, [this.world.walls, this.world.hazards]);
 
@@ -78,8 +80,12 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     this.scale.on("resize", this.applyZoom, this);
     this.events.once("shutdown", () => this.scale.off("resize", this.applyZoom, this));
 
-    // Tell the UI which area we're in
+    // Tell the UI which area we're in, and explain the game the first time
     this.game.events.emit("area-entered", this.map.name);
+    if (!DBG.state.introShown) {
+      DBG.state.introShown = true;
+      this.time.delayedCall(2500, () => this.game.events.emit("toast", DBG.data.jokes.intro));
+    }
   }
 
   /** Pick a whole-number zoom so pixels stay sharp (or use settings.zoom). */

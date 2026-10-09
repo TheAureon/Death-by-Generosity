@@ -24,6 +24,18 @@ DBG.Art.palette = {
   rock: "#8e939b", rockDark: "#62666e", rockLight: "#b9bec5",
   fence: "#c08e5c", fenceDark: "#8a5f38",
 
+  // Village buildings and props
+  roofRed: "#b5503a", roofRedDark: "#8a3428", roofRedLight: "#d8735a",
+  roofStraw: "#d9b45a", roofStrawDark: "#a8843a", roofStrawLight: "#f0d58a",
+  roofSlate: "#55606e", roofSlateDark: "#3b4450", roofSlateLight: "#7a8696",
+  wood: "#c08e5c", woodDark: "#8a5f38", woodLight: "#d8a878",
+  glass: "#7cc0f0", glassDark: "#3f6fb4",
+  cobble: "#b8ab94", cobbleDark: "#8e8270", cobbleLight: "#d4c8b0",
+  soil: "#8a5f38", soilDark: "#6b4428", sprout: "#63b04a",
+  coal: "#2b2226", ember: "#e8541c", emberHot: "#ffb23a",
+  wellWater: "#2f5f94",
+  hay: "#e8c860", hayDark: "#b8963a",
+
   // Hero (the cursed golden armour)
   gold: "#f2c14e", goldDark: "#c48a2c", goldLight: "#fff0a8",
   cape: "#c8323c", capeDark: "#8e1f2a",

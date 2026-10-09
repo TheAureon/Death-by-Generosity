@@ -66,3 +66,11 @@ DBG.Entities.Chicken = class Chicken extends Phaser.Physics.Arcade.Sprite {
     this.destroy();
   }
 };
+
+// Placed on a map ("spawn": "pen_chicken"): a chicken that never leaves.
+DBG.Entities.behaviors.chicken = class PenChicken extends DBG.Entities.Chicken {
+  constructor(scene, x, y) {
+    super(scene, x, y, null);
+    this.life = Infinity;
+  }
+};

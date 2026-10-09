@@ -12,5 +12,9 @@ DBG.data.creatures = {
     "attackCooldown": 1.6, // seconds between punches
     "respawnSeconds": 3,
     "solid": true
+  },
+  "pen_chicken": {
+    "name": "Chicken",
+    "behavior": "chicken"  // pecks around forever; flees from people
   }
 };

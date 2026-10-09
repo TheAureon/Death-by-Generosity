@@ -9,6 +9,10 @@
 //   fleeBuff — panics at their own glowing buff and runs around screaming
 //   trip     — starts an attack, trips over their own feet
 //   selfHit  — shows off a move and hits themselves
+//   seekHazard — "hold on, one sec" — walks straight into the nearest hazard
+//                of the kind named in data/npcs.js "seekHazard" (e.g. forge)
+//   backpedal  — gives a dramatic speech while backing away from the hero
+//                (lines from "quirkLines.backpedal"), into whatever is behind
 // None of them look where they're going, so hazards get them too.
 // ---------------------------------------------------------------------------
 DBG.AI.FightBrain = class FightBrain {
@@ -22,6 +26,7 @@ DBG.AI.FightBrain = class FightBrain {
 
   set(state, seconds = 0) {
     this.clearFx();
+    this.npc.lookAt = null;
     this.state = state;
     this.timer = seconds;
   }
@@ -75,6 +80,21 @@ DBG.AI.FightBrain = class FightBrain {
         npc.sayQuirk("selfHit");
         this.windup("self");
         break;
+      case "seekHazard": {
+        const spot = this.findHazard(this.npc.def.seekHazard, 14);
+        if (!spot) { this.set("approach", 6); break; }
+        this.goal = spot;
+        npc.sayQuirk("seekHazard");
+        this.set("seek", 7);
+        break;
+      }
+      case "backpedal": {
+        const lines = (npc.def.quirkLines && npc.def.quirkLines.backpedal) || ["..."];
+        this.speech = lines.slice();
+        this.speechTimer = 0;
+        this.set("backpedal", 1.6 * lines.length + 0.6);
+        break;
+      }
       case "trip":
         this.tripIn = Phaser.Math.FloatBetween(0.3, 0.9);
         this.set("approach", 6);
@@ -83,6 +103,23 @@ DBG.AI.FightBrain = class FightBrain {
         this.tripIn = null;
         this.set("approach", 6);
     }
+  }
+
+  /** Centre of the nearest tile with this hazard, within `range` tiles. */
+  findHazard(kind, range) {
+    if (!kind) return null;
+    const S = DBG.data.settings.tileSize, map = this.scene.map;
+    const cx = Math.floor(this.npc.x / S), cy = Math.floor((this.npc.y - 2) / S);
+    let best = null, bestD = Infinity;
+    for (let y = cy - range; y <= cy + range; y++) {
+      for (let x = cx - range; x <= cx + range; x++) {
+        const t = map.tile(x, y);
+        if (!t || t.hazard !== kind) continue;
+        const d = (x - cx) ** 2 + (y - cy) ** 2;
+        if (d < bestD) { bestD = d; best = { x: x * S + S / 2, y: y * S + S / 2 + 2 }; }
+      }
+    }
+    return best;
   }
 
   /** Raise the weapon... (target: "hero" or "self") */
@@ -197,6 +234,26 @@ DBG.AI.FightBrain = class FightBrain {
         npc.setVelocity(this.dir.x * speed * 1.8, this.dir.y * speed * 1.8);
         if (this.timer <= 0) this.decide();
         break;
+
+      case "seek": {
+        const g = this.goal, dx = g.x - npc.x, dy = g.y - npc.y, d = Math.hypot(dx, dy) || 1;
+        npc.setVelocity((dx / d) * speed * 1.2, (dy / d) * speed * 1.2);
+        if (this.timer <= 0 || !npc.body.blocked.none) this.decide(); // gave up / stuck on a wall
+        break;
+      }
+
+      case "backpedal": {
+        // Back away from the hero while talking, still facing them
+        const dx = npc.x - hero.x, dy = npc.y - hero.y, d = Math.hypot(dx, dy) || 1;
+        npc.setVelocity((dx / d) * speed * 0.6, (dy / d) * speed * 0.6);
+        npc.lookAt = hero;
+        if ((this.speechTimer -= dt) <= 0 && this.speech.length) {
+          npc.say(this.speech.shift(), 1500);
+          this.speechTimer = 1.6;
+        }
+        if (this.timer <= 0) this.decide();
+        break;
+      }
 
       case "dazed": {
         const t = this.scene.time.now / 300;

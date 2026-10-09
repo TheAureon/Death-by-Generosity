@@ -42,3 +42,14 @@ characters and objects, and y-sorting so characters walk behind trees.
 - Dead NPCs drop their gear and a "suspiciously similar" one respawns
   (settings.npcRespawnSeconds). Milestone 7 may change this (world memory).
 - Flattening someone yourself (F) counts as a wasted attempt, not a gift-death.
+
+## Little Givington (starting village)
+| Villager | Where | Signature failure |
+|---|---|---|
+| Farmer Bob | Farm, north-west | Chases chickens instead of fighting |
+| Grandma Gertrude | West house | Shows off "her special move", hits herself |
+| Kevin | South-west, by the cliff | Panics at his own buff glow, runs off the cliff |
+| Brunhilde the Smith | Forge, north-east | "Heats up" her weapon by walking into the coals |
+| Sir Reginald | Pond dock, east | Heroic charge... the wrong way, into the pond |
+| Mayor Humphrey | Town square | Gives a speech while backing into the well |
+Brunhilde, Reginald and the Mayor start with gear, so they'll fight right away.

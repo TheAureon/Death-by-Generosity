@@ -8,7 +8,7 @@
 //
 // Shapes:  weapon: sword, axe, club, spear, staff, pan, fish
 //          armor : plate, leather, robe
-//          helmet: helm, hat, crown, pot
+//          helmet: helm, hat, crown, pot, tophat
 //          shield: round, kite, door
 //          cape  : cape
 // ===========================================================================
@@ -55,6 +55,12 @@ DBG.data.items = {
     "stats": { "attack": 45 },
     "description": "The pointy end goes toward the hero. Usually."
   },
+  "smith_hammer": {
+    "name": "Forge Hammer", "slot": "weapon",
+    "art": { "type": "club", "color": "#55555f", "trim": "#7a5232" },
+    "stats": { "attack": 30 },
+    "description": "For hitting hot metal. Or hot heroes. Mostly metal."
+  },
   "leather_vest": {
     "name": "Leather Vest", "slot": "armor",
     "art": { "type": "leather", "color": "#8a5a2b", "trim": "#c99560" },
@@ -96,6 +102,12 @@ DBG.data.items = {
     "art": { "type": "crown", "color": "#f2c14e", "trim": "#e8505b" },
     "stats": { "maxHp": 100 },
     "description": "Gives no protection, but tons of confidence."
+  },
+  "mayor_hat": {
+    "name": "Mayoral Top Hat", "slot": "helmet",
+    "art": { "type": "tophat", "color": "#2b2b33", "trim": "#c8323c" },
+    "stats": { "maxHp": 10 },
+    "description": "Adds 3 feet of authority. Removes all common sense."
   },
   "round_shield": {
     "name": "Round Shield", "slot": "shield",

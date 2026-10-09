@@ -2,14 +2,16 @@
 // Hazards: what happens when an NPC stumbles into water, lava, a pit or off
 // a cliff. Which tiles are hazards is set in data/tiles.js ("hazard").
 //
-//   lava  — always fatal (they become a little ash pile)
-//   pit   — always fatal (they fall forever)
+//   lava, forge — always fatal (they become a little ash pile)
+//   pit, well   — always fatal (they fall forever)
 //   water — heavy gear (lots of defense) = they sink. Otherwise they crawl
 //           out soggy, a bit hurt and slow for a while
 //   cliff — they tumble down to the ground below and get hurt (maybe fatally)
 // ---------------------------------------------------------------------------
 (function () {
-  const KINDS = ["water", "lava", "pit", "cliff"];
+  const KINDS = ["water", "lava", "pit", "cliff", "forge", "well"];
+  // Which death animation each hazard uses
+  const ANIM = { lava: "burn", forge: "burn", water: "sink", pit: "fall", well: "fall", cliff: "flop" };
   const SINK_DEFENSE = 50; // gear defense at which you stop floating
 
   /** Hazard name under someone's feet at pixel (x, y), or null. */
@@ -81,7 +83,8 @@
     const s = npc.scene;
     npc.deathCause = hazard;
     npc.setAngle(0);
-    if (hazard === "lava") {
+    const anim = ANIM[hazard] || "flop";
+    if (anim === "burn") {
       // Hop up in surprise, flash, then crumble into ash
       npc.say("HOT HOT HOT", 900);
       s.tweens.add({
@@ -95,12 +98,12 @@
           npc.finishDeath(600);
         },
       });
-    } else if (hazard === "water") {
+    } else if (anim === "sink") {
       // Sinks straight down, bubbles
       splash(npc);
       s.tweens.add({ targets: npc, scaleY: 0, duration: 1400, ease: "Quad.easeIn", onComplete: () => npc.finishDeath(300) });
       s.time.addEvent({ delay: 250, repeat: 6, callback: () => npc.burst("spark", [0xe6f4ff], 3, 0, { gravityY: -80, speed: { min: 5, max: 20 } }) });
-    } else if (hazard === "pit") {
+    } else if (anim === "fall") {
       // Spins away into the dark, with a fading scream
       const scream = s.add.text(npc.x, npc.y - 24, "aaaAAAaaa...", {
         fontFamily: '"Courier New", monospace', fontStyle: "bold", fontSize: "7px", color: "#fff6d8",

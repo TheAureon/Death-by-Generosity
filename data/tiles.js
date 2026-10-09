@@ -27,6 +27,23 @@ DBG.data.tiles = {
   "B": { "name": "Bush",         "art": "bush",  "solid": true, "object": true, "ground": "." },
   "r": { "name": "Rock",         "art": "rock",  "solid": true, "object": true, "ground": "." },
   "f": { "name": "Fence",        "art": "fence", "solid": true, "object": true, "ground": "." },
+  // ---- Village ----
+  "c": { "name": "Cobblestone",  "art": "cobble" },
+  ";": { "name": "Crops",        "art": "crops" },
+  "R": { "name": "Red roof",     "art": "roof_red",   "solid": true },
+  "Y": { "name": "Straw roof",   "art": "roof_straw", "solid": true },
+  "K": { "name": "Slate roof",   "art": "roof_slate", "solid": true },
+  "H": { "name": "House wall",   "art": "house_wall",   "solid": true },
+  "W": { "name": "Window",       "art": "house_window", "solid": true },
+  "+": { "name": "Door",         "art": "house_door",   "solid": true },
+  "*": { "name": "Forge coals",  "art": "coals", "solid": true, "hazard": "forge" },
+  "O": { "name": "Well",         "art": "well",  "solid": true, "hazard": "well" },
+  "a": { "name": "Anvil",        "art": "anvil",    "solid": true, "object": true, "ground": "c" },
+  "h": { "name": "Haystack",     "art": "haystack", "solid": true, "object": true, "ground": "." },
+  "b": { "name": "Barrel",       "art": "barrel",   "solid": true, "object": true, "ground": "c" },
+  "x": { "name": "Crate",        "art": "crate",    "solid": true, "object": true, "ground": "=" },
+  "!": { "name": "Signpost",     "art": "signpost", "solid": true, "object": true, "ground": "=" },
+
   "P": { "name": "Player start", "playerStart": true, "copyNeighbor": true },
   "D": { "name": "Training dummy", "spawn": "training_dummy", "solid": true, "copyNeighbor": true }
 };

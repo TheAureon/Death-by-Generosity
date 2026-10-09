@@ -19,5 +19,5 @@ DBG.data.settings = {
   "npcRespawnSeconds": 10,
 
   // Which map to load when the game starts (file name in data/maps/).
-  "startMap": "test_meadow"
+  "startMap": "village"
 };

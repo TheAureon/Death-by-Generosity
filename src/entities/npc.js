@@ -46,6 +46,9 @@
       this.layers = {}; // slot -> sprite
       this.recalcStats();
       this.hp = this.stats.maxHp;
+      // Some people already own a little gear (data/npcs.js "startingGear")
+      (this.def.startingGear || []).forEach((itemId) => this.equip(itemId));
+      this.hp = this.stats.maxHp;
     }
 
     // ---- Gear ---------------------------------------------------------------
@@ -120,9 +123,13 @@
       DBG.UI.SpeechBubble.say(this.scene, this, text, ms);
     }
 
-    /** Say a random line from data/jokes.js -> quirkLines[key]. */
+    /**
+     * Say a random line for a quirk: this NPC's own "quirkLines" in
+     * data/npcs.js if they have some, otherwise the shared ones in jokes.js.
+     */
     sayQuirk(key) {
-      const lines = DBG.data.jokes.quirkLines[key];
+      const own = this.def.quirkLines && this.def.quirkLines[key];
+      const lines = own || DBG.data.jokes.quirkLines[key];
       if (lines) this.say(Phaser.Utils.Array.GetRandom(lines));
     }
 
@@ -150,7 +157,7 @@
       this.hp -= amount;
       this.setTintFill(0xffffff);
       // Clear the flash (unless lava has already set a "burning" tint)
-      this.scene.time.delayedCall(70, () => this.active && this.deathCause !== "lava" && this.clearTint());
+      this.scene.time.delayedCall(70, () => this.active && this.deathCause !== "lava" && this.deathCause !== "forge" && this.clearTint());
       if (this.hp <= 0) this.die(cause === "hit" ? "thorns" : cause, source);
     }
 
@@ -211,7 +218,7 @@
       s.events.emit("npc-died", this, this.deathCause); // WorldScene: tally, drop gear, respawn
       s.time.delayedCall(delay, () => {
         // A little ghost floats up
-        if (this.deathCause !== "lava") {
+        if (this.deathCause !== "lava" && this.deathCause !== "forge") {
           const ghost = s.add.image(this.x, this.y - 4, "npc_" + this.id, 0).setOrigin(0.5, 1)
             .setTintFill(0xffffff).setAlpha(0.6).setDepth(99990);
           s.tweens.add({ targets: ghost, y: ghost.y - 30, alpha: 0, duration: 1600, onComplete: () => ghost.destroy() });
@@ -276,7 +283,9 @@
       const vx = this.body.velocity.x, vy = this.body.velocity.y;
       const moving = this.body.enable && (Math.abs(vx) > 1 || Math.abs(vy) > 1);
       if (moving && !this.locked) {
-        if (Math.abs(vx) > Math.abs(vy)) { this.facing = "side"; this.setFlipX(vx > 0); }
+        // Normally face where they walk; some quirks keep them facing the hero
+        if (this.lookAt) this.face(this.lookAt);
+        else if (Math.abs(vx) > Math.abs(vy)) { this.facing = "side"; this.setFlipX(vx > 0); }
         else this.facing = vy < 0 ? "up" : "down";
         this.walkTime += dt;
       } else {

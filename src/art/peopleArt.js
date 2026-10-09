@@ -219,6 +219,11 @@
           g.rect(x + 1, y - 2, w - 2, 2, c);
           for (let i = 1; i < w - 1; i += 2) g.px(x + i, y - 3, c);
           g.px(x + Math.floor(w / 2), y - 1, t);
+        } else if (a.type === "tophat") {
+          g.rect(x - 1, y + 1, w + 2, 1, c);              // brim
+          g.rect(x + 1, y - 6, w - 2, 7, c);              // tall crown
+          g.rect(x + 1, y - 1, w - 2, 1, t);              // band
+          g.px(x + 2, y - 5, "#55555f");                  // shine
         } else if (a.type === "pot") {
           g.rect(x - 1, y - 3, w + 2, 6, c); g.rect(x - 1, y + 2, w + 2, 1, t);
           g.rect(x + w + 1, y - 1, 2, 1, t); // handle

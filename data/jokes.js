@@ -3,6 +3,14 @@
 // ===========================================================================
 DBG.data.jokes = {
 
+  // Shown once when the game starts, one after another
+  "intro": [
+    "Your Esc key is broken. Save & Exit doesn't work either.",
+    "There is only one way out of this game: die.",
+    "You are far too strong to die. So... make someone ELSE strong enough.",
+    "Give people gear (E), then ask them to fight you. Good luck!"
+  ],
+
   // Shown after the pause menu flickers and dies (Esc key). Picked in order.
   "escMessages": [
     "The Esc key has been repossessed by the Kingdom.",
@@ -56,6 +64,8 @@ DBG.data.jokes = {
     "thorns":  ["{name} hit you and was hit back. Very hard. By themselves.", "{name} has been thorned out of existence.", "{name} discovered what x10 thorns means."],
     "lava":    ["{name} walked into lava. With confidence.", "{name} is now extra crispy.", "{name} found out lava is not a warm bath."],
     "water":   ["{name} sank. The armour was heavy. The lake was deep.", "{name} forgot that metal doesn't float."],
+    "forge":   ["{name} became part of the next batch of swords.", "{name} heated the steel. And themselves.", "{name} is now well-tempered."],
+    "well":    ["{name} fell down the well. Echoes are still arriving.", "{name} made a wish. It did not come true.", "{name} is now the well's problem."],
     "pit":     ["{name} fell into a pit. They're still falling.", "{name} took the express elevator down."],
     "cliff":   ["{name} tumbled off a cliff and stayed down."],
     "selfHit": ["{name} hit themselves. Critically.", "{name} won the fight against {name}."],

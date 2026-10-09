@@ -243,15 +243,18 @@
     addTexture(scene, "shadow", shadow());
   };
 
+  // Shared with villageArt.js
+  DBG.Art.makeEdges = edges;
+
   /** Which art names are animated (key -> frames per second). */
-  DBG.Art.animatedTiles = { water: 3, lava: 4 };
+  DBG.Art.animatedTiles = { water: 3, lava: 4, coals: 5 };
 
   /** Which art names get edge overlays where they touch different tiles. */
-  DBG.Art.edgedTiles = ["water", "lava", "pit"];
+  DBG.Art.edgedTiles = ["water", "lava", "pit", "coals", "well"];
 
   /**
    * Pick the exact texture for a tile, so neighbours can change the look
-   * (random grass variety, fences that connect).
+   * (random grass variety, fences that connect, roof ridges and eaves).
    *   art: the "art" name from data/tiles.js
    *   x, y: tile position; sameArt(dx, dy): is the neighbour the same art?
    */
@@ -267,6 +270,12 @@
         if (sameArt(-1, 0) || sameArt(1, 0)) return "fence_h";
         if (sameArt(0, -1) || sameArt(0, 1)) return "fence_v";
         return "fence_post";
+      case "roof_red": case "roof_straw": case "roof_slate":
+        // Ridge on the top row, eave on the bottom row, shingles in between
+        if (!sameArt(0, -1)) return art + "_top";
+        if (!sameArt(0, 1)) return art + "_bot";
+        return art + "_mid";
+      case "cobble": return "cobble_" + pick(2);
       default: return art;
     }
   };

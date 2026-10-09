@@ -37,6 +37,10 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/items.js` | Every item: name, slot, stats, colours/shape, description |
 | `data/npcs.js` | People: name, colours, stats, lines, and their silly fighting "quirks" |
 
+**Switching maps:** the game starts in the village (`data/maps/village.js`).
+To play the old test map, change `"startMap"` in `data/settings.js` to
+`"test_meadow"`.
+
 **Placing NPCs on a map:** in the map file, add a `"legend"` entry like
 `"1": { "npc": "bob" }`, then put a `1` in the grid where they should stand.
 
