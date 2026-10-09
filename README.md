@@ -15,10 +15,19 @@ Controls:
 - **E** (or Space) next to someone: talk — give a gift, or ask them to fight you
 - **F**: attack directly (flattens people instantly; counts as a wasted attempt)
 - **I**: look in your bag
+- **J**: the Journal — the menu that actually works (save, load, new game)
 - **C**: character sheet
 - **K**: punch yourself (it doesn't work)
 - **Esc**: pause menu (it doesn't work either)
 - **Save & Exit** button, top-right (you can guess)
+
+## Saving
+
+The game saves itself (when you change maps, give gifts, people die, or you
+craft), and **Save & Exit** really saves now (it still won't exit). You can
+also save, load, or start a new game from the **Journal** (press **J**).
+Saves live in your web browser, so reopening `index.html` in the same browser
+continues where you left off. To start over: Journal → New game.
 
 ## Editing the game (no coding needed)
 
@@ -71,12 +80,13 @@ data/            editable content (settings, tile legend, maps, regions)
 src/core/        global namespace
 src/art/         ALL generated pixel art (swap in real art here)
 src/world/       map parsing (mapLoader) and building (worldBuilder)
-src/systems/     game rules (combat + thorns, inventory, gifting, hazards)
+src/systems/     game rules (combat + thorns, inventory, gifting, hazards,
+                 world memory, saving)
 src/ai/          fightBrain: how NPCs fight (badly)
 src/entities/    player, training dummy, NPCs (drawn in gear layers),
                  monsters, chickens, dropped items
 src/ui/          HUD pieces: health bar, tally, messages, speech bubbles,
-                 talk menu, bag/gift menu, forge (crafting) menu, character sheet,
+                 talk menu, bag/gift menu, forge (crafting) menu, journal, character sheet,
                  Esc + Save & Exit gags
 src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top)
 vendor/          Phaser engine file

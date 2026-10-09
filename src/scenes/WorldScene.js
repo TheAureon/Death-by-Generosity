@@ -25,7 +25,8 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     // Spawn the hero at the arrival spot (coming from another map) or on "P"
     const arrival = data.arrival && this.world.spawns.find((s) => s.arrival === data.arrival);
     const start = this.map.playerStart;
-    if (arrival) this.player = new DBG.Entities.Player(this, arrival.x, arrival.y);
+    if (data.pos) this.player = new DBG.Entities.Player(this, data.pos.x, data.pos.y); // from a save
+    else if (arrival) this.player = new DBG.Entities.Player(this, arrival.x, arrival.y);
     else this.player = new DBG.Entities.Player(this, start.x * S + S / 2, start.y * S + S - 2);
     this.leaving = false;
     this.physics.add.collider(this.player, [this.world.walls, this.world.hazards]);
@@ -58,7 +59,12 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     // Chickens placed on the map live with the other chickens (they move)
     this.chickens = this.creatures.filter((c) => c instanceof DBG.Entities.Chicken);
     this.creatures = this.creatures.filter((c) => !(c instanceof DBG.Entities.Chicken));
-    this.pickups = [];
+    // Items left lying on this map last time (world memory)
+    this.pickups = DBG.Memory.takePickups(this.map.id).map((p) => {
+      const pk = new DBG.Entities.ItemPickup(this, p.x, p.y, p.item);
+      pk.isLoot = p.loot;
+      return pk;
+    });
     this.physics.add.collider(this.chickens, [this.world.walls, this.world.hazards]);
 
     // Interact: E (or Space) next to a calm NPC
@@ -83,6 +89,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     this.events.on("hero-strike", this.onHeroStrike, this);
     this.events.on("monster-died", this.onMonsterDied, this);
     this.events.once("shutdown", () => {
+      this.rememberPickups();
       this.events.off("npc-died", this.onNpcDied, this);
       this.events.off("hero-strike", this.onHeroStrike, this);
       this.events.off("monster-died", this.onMonsterDied, this);
@@ -100,10 +107,15 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
 
     // Tell the UI which area we're in, and explain the game the first time
     this.game.events.emit("area-entered", this.map.name);
-    if (!DBG.state.introShown) {
+    if (DBG.state.continued) {
+      DBG.state.continued = false;
+      this.time.delayedCall(1500, () => this.game.events.emit("toast", DBG.data.jokes.welcomeBack));
+    } else if (!DBG.state.introShown) {
       DBG.state.introShown = true;
       this.time.delayedCall(2500, () => this.game.events.emit("toast", DBG.data.jokes.intro));
     }
+    DBG.state.mapId = this.map.id;
+    DBG.Save.autosave(); // arriving somewhere is a good moment to save
   }
 
   /** Pick a whole-number zoom so pixels stay sharp (or use settings.zoom). */
@@ -183,8 +195,11 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     const lines = deaths[cause] || deaths.thorns;
     this.game.events.emit("toast", Phaser.Utils.Array.GetRandom(lines).split("{name}").join(npc.name));
 
-    // Their gear pops out where they last stood safely
-    Object.values(npc.gear).forEach((itemId) => {
+    // Their gear (and anything they took as tolls) pops out where they last
+    // stood safely. The world remembers a replacement is coming.
+    const hoard = npc.memory.hoard.slice();
+    DBG.Memory.npcDied(npc.id);
+    Object.values(npc.gear).concat(hoard).forEach((itemId) => {
       this.pickups.push(DBG.Entities.ItemPickup.drop(this, npc.lastSafe.x, npc.lastSafe.y, itemId));
     });
 
@@ -197,8 +212,17 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
       fresh.setAlpha(0);
       this.tweens.add({ targets: fresh, alpha: 1, duration: 500 });
       const lines = DBG.data.jokes.respawn;
-      this.game.events.emit("toast", Phaser.Utils.Array.GetRandom(lines).split("{name}").join(npc.name));
+      this.game.events.emit("toast", Phaser.Utils.Array.GetRandom(lines).split("{name}").join(fresh.name));
     });
+    DBG.Save.autosave();
+  }
+
+  /** Write the items lying on the ground into world memory. */
+  rememberPickups() {
+    if (this.skipRemember) { this.skipRemember = false; return; }
+    const list = this.pickups.filter((p) => p.active)
+      .map((p) => ({ item: p.itemId, x: Math.round(p.x), y: Math.round(p.shadow.y), loot: !!p.isLoot }));
+    DBG.Memory.rememberPickups(this.map.id, list);
   }
 
   /** A monster died: scatter its loot and bring a new one back later. */
@@ -270,7 +294,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     const near = this.nearestNPC(40);
     if (near && !near.greeted) {
       near.greeted = true;
-      near.say(near.def.greeting, 3000);
+      near.say(near.greetingLine(), 3000);
     }
 
     // Floating "E: Talk" over whoever is in reach

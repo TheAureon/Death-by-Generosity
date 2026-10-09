@@ -20,6 +20,11 @@
 //   "seekHazard"  : which hazard the seekHazard quirk walks into
 //                   (forge, well, water, lava, pit, cliff)
 //   "crafter"     : true = can forge items from monster bits (data/recipes.js)
+//   "ranks"       : titles they earn when gifts make them strong. "power" is
+//                   attack + defense + (max HP / 10). Each rank can set:
+//                   title, greeting, promotion (said on ranking up),
+//                   idle ("brag" = strut and boast, "toll" = charge the hero
+//                   a monster bit to pass), brags (their boasts)
 //   "quirkLines"  : their own lines for a quirk (instead of the shared ones
 //                   in data/jokes.js). backpedal uses them as a speech.
 // ===========================================================================
@@ -43,7 +48,13 @@ DBG.data.npcs = {
     "quirks": { "chicken": 6, "attack": 2, "wrongWay": 1 },
     "quirkLines": {
       "chicken": ["CLUCKY? Is that you?!", "Who let you out of the pen?!", "Not now— oh, she's so fluffy."]
-    }
+    },
+    "ranks": [
+      { "power": 60, "title": "Bob the Barbarian", "idle": "brag",
+        "greeting": "Name's Bob. BARBARIAN Bob. The turnips fear me now.",
+        "promotion": "I feel... BARBARIC.",
+        "brags": ["I could wrestle a cow. Two cows.", "The chickens bow when I pass now.", "Turnips? I PUNCH turnips."] }
+    ]
   },
 
   // ---- Grandma Gertrude — signature: hits herself ----
@@ -64,7 +75,13 @@ DBG.data.npcs = {
     "quirks": { "selfHit": 6, "attack": 1, "trip": 2 },
     "quirkLines": {
       "selfHit": ["This is how we did it in '42!", "Watch Granny's special move!", "Now where's my glasses— HIYA!"]
-    }
+    },
+    "ranks": [
+      { "power": 50, "title": "Gertrude the Terrible", "idle": "brag",
+        "greeting": "Gertrude the TERRIBLE, dear. Cookie?",
+        "promotion": "Oh my. I feel forty again!",
+        "brags": ["I once beat a bear. With a smaller bear.", "Respect your elders. OR ELSE.", "My knitting needles are registered weapons now."] }
+    ]
   },
 
   // ---- Kevin — signature: runs from his own buff (lives by the cliff) ----
@@ -85,7 +102,13 @@ DBG.data.npcs = {
     "quirks": { "fleeBuff": 6, "wrongWay": 1, "attack": 1 },
     "quirkLines": {
       "fleeBuff": ["WHY AM I SPARKLING?!", "MOM! MOM! I'M GLOWING!", "IT'S FOLLOWING MEEE!"]
-    }
+    },
+    "ranks": [
+      { "power": 40, "title": "Kevin the Mighty", "idle": "brag",
+        "greeting": "It's Kevin the MIGHTY now. Say it. SAY IT.",
+        "promotion": "I'M THE MAIN CHARACTER NOW.",
+        "brags": ["I'm basically a god.", "Mom says I can't wear this to dinner.", "Can you, like, sign my sword?"] }
+    ]
   },
 
   // ---- Brunhilde the Blacksmith — signature: walks into her own forge ----
@@ -109,7 +132,13 @@ DBG.data.npcs = {
     "seekHazard": "forge",
     "quirkLines": {
       "seekHazard": ["Hold on! Gotta heat this up first!", "Proper weapons need proper heat. One sec!", "Let me just warm up the steel—"]
-    }
+    },
+    "ranks": [
+      { "power": 130, "title": "Brunhilde the Unstoppable", "idle": "brag",
+        "greeting": "Welcome to the forge of the UNSTOPPABLE. Mind the coals. I won't.",
+        "promotion": "Now THIS is how a smith should be equipped.",
+        "brags": ["I could forge a sword with my bare hands now.", "The anvil fears me.", "Hot coals? I've stopped noticing."] }
+    ]
   },
 
   // ---- Sir Reginald (retired knight) — signature: heroic charge, wrong way ----
@@ -131,7 +160,13 @@ DBG.data.npcs = {
     "quirks": { "wrongWay": 7, "attack": 1 },
     "quirkLines": {
       "wrongWay": ["FOR THE KING!", "CHAAARGE! ...wait, which way?", "Fear not! I shall... over there!"]
-    }
+    },
+    "ranks": [
+      { "power": 100, "title": "Sir Reginald the Re-Bent", "idle": "brag",
+        "greeting": "Back in active service! My back cracked loudly in agreement.",
+        "promotion": "I'm un-retiring! Somebody fetch my horse! ...I don't have a horse.",
+        "brags": ["In my day I fought dragons. Small ones. Lizards, really.", "Kneel! Actually, don't. My knees can't take watching."] }
+    ]
   },
 
   // ---- Mayor Humphrey — signature: speech while backing into the well ----
@@ -153,6 +188,37 @@ DBG.data.npcs = {
     "quirks": { "backpedal": 6, "attack": 1 },
     "quirkLines": {
       "backpedal": ["Citizens of Little Givington!", "Today, I fight for ALL of you!", "As your mayor, I promise...", "...to never, EVER back down!"]
-    }
+    },
+    "ranks": [
+      { "power": 60, "title": "Emperor Humphrey", "idle": "brag",
+        "greeting": "It's EMPEROR now. The village voted. I was the only voter.",
+        "promotion": "By the power vested in me... by me... I am EMPEROR!",
+        "brags": ["New law: everyone must clap when I walk by.", "I've annexed the well.", "Taxes are now paid in compliments."] }
+    ]
+  },
+
+  // ---- Rudy the Bandit (on the Plains road) — the more you give him, the
+  //      more he "rules the road": with good gear he charges you a toll ----
+  "rudy": {
+    "name": "Rudy the Bandit",
+    "look": { "skin": "#e8b48a", "hair": "#2b1d24", "hairStyle": "spiky", "shirt": "#3a3a44", "pants": "#5a3a22", "shoes": "#2b1d24" },
+    "stats": { "maxHp": 35, "attack": 3, "defense": 0, "speed": 45 },
+    "wander": 2,
+    "greeting": "Your money or your... um. Please? I'm new at this.",
+    "giftLines": [
+      "Wait, you're GIVING me a {item}? That's not how robbing works.",
+      "A {item}! This is the best robbery ever.",
+      "Free {item}? Are you... robbing yourself?"
+    ],
+    "swapLine": "Have my old {item}. Consider it a refund.",
+    "fightStart": "Stand and deliver! ...Your death, I mean. Hyah!",
+    "refuseFight": "Fight? With what? I sold my knife for lunch.",
+    "quirks": { "attack": 2, "wrongWay": 2, "trip": 2 },
+    "ranks": [
+      { "power": 60, "title": "Rudy, Lord of the Road", "idle": "toll",
+        "greeting": "This road is MINE now. Toll's one monster bit. Pay up.",
+        "promotion": "Oh. OH. I'm the boss bandit now. This road is MINE.",
+        "brags": ["Nobody passes without paying!"] }
+    ]
   }
 };

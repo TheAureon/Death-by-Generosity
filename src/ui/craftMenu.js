@@ -85,6 +85,7 @@ DBG.UI.CraftMenu = class CraftMenu {
     if (!inv.add(recipe.result)) return this.scene.toast.show(J.bagFull.replace("{item}", name));
     Object.entries(recipe.needs).forEach(([id, n]) => inv.remove(id, n));
     this.scene.toast.show(J.crafted.replace("{item}", name).replace("{name}", this.npc.name));
+    DBG.Save.autosave();
     this.build();
   }
 

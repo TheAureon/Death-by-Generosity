@@ -93,6 +93,28 @@ DBG.data.jokes = {
   // When someone respawns after dying ({name})
   "respawn": ["A suspiciously similar {name} moves in.", "{name} is back. Nobody asks questions.", "{name}'s identical cousin arrives."],
 
+  // ---- World memory & saving (Milestone 7) --------------------------------
+  "welcomeBack": "Welcome back. You're still alive. Sorry about that.",
+  "rankUp": "{old} is now {title}!",
+  "tollPaid": "Toll paid: one {item}. Pleasure doing business!",
+  "tollBroke": "No monster bits? Ugh. Fine. Free pass. This time.",
+  "journal": {
+    "title": "Adventurer's Journal",
+    "people": "People you've met:",
+    "nobody": "Nobody yet. Go say hi. Then give them a sword.",
+    "save": "Save game",
+    "load": "Load game",
+    "newGame": "New game",
+    "newGameConfirm": "Really start over? (press again)",
+    "exit": "Exit game",
+    "close": "Close journal",
+    "savedOk": "Game saved. Unlike you, the save file is safe.",
+    "saveFailed": "Couldn't save. Your browser said no. Rude.",
+    "noSave": "There's no save yet. Try saving first. Revolutionary.",
+    "loadedOk": "Loaded your last save. All of your stuff, none of your hope.",
+    "exitFails": "This journal has no Exit page. Someone ripped it out. It was you. You forgot."
+  },
+
   // Crafting at the forge ({item}, {name} = the smith)
   "crafted": "{name} forged a {item}! It's still glowing. Don't touch it. Or do.",
   "craftMissing": "Not enough monster bits for the {item}. Go bully some wildlife.",

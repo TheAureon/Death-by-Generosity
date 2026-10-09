@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // Gifting: hand an item from the hero's bag to an NPC.
 // The NPC puts it on (sprite changes), says a line, and hands back whatever
-// they were wearing in that slot before.
+// they were wearing in that slot before. Gifts can earn them a new rank.
 // ---------------------------------------------------------------------------
 DBG.Gifting = {
   /** Give the item in inventory slot `index` to `npc`. */
@@ -12,6 +12,7 @@ DBG.Gifting = {
     const item = DBG.data.items[itemId];
     const statsBefore = { ...npc.stats };
 
+    const rankBefore = npc.rank;
     const oldId = npc.equip(itemId);
     npc.celebrate();
     npc.giftsReceived = (npc.giftsReceived || 0) + 1;
@@ -33,5 +34,16 @@ DBG.Gifting = {
       say += "\n" + (returned ? npc.def.swapLine.replace("{item}", oldName) : `(Your bag is full. The ${oldName} is lost forever.)`);
     }
     DBG.UI.SpeechBubble.say(scene, npc, say, 3500);
+
+    // Strong enough for a new rank? Make a fuss about it.
+    if (npc.rank && npc.rank !== rankBefore) {
+      scene.time.delayedCall(3600, () => {
+        if (!npc.active) return;
+        npc.celebrate();
+        if (npc.rank.promotion) npc.say(npc.rank.promotion, 3000);
+      });
+      scene.game.events.emit("toast", DBG.data.jokes.rankUp.replace("{old}", npc.baseName).replace("{title}", npc.rank.title));
+    }
+    DBG.Save.autosave();
   },
 };

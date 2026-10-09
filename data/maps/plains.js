@@ -6,6 +6,7 @@
 //   Middle     : a ravine (%) and a sinkhole (o)
 //   South-west : the goose pond, home of the Angry Geese (G)
 //   East       : the forest, where Grumpy Boars (Q) live
+//   Road       : Rudy the Bandit (7) hangs around here
 //
 // Monsters are defined in data/creatures.js. & is where you arrive.
 // ===========================================================================
@@ -22,7 +23,8 @@ DBG.addMap("plains", {
     "S": { "spawn": "slime" },
     "U": { "spawn": "blue_slime" },
     "G": { "spawn": "goose" },
-    "Q": { "spawn": "boar" }
+    "Q": { "spawn": "boar" },
+    "7": { "npc": "rudy" }
   },
 
   "grid": `
@@ -40,7 +42,7 @@ TT............%%%%%%%%%..==..................T....TT
 TT.......,B...%%%%%%%%%..==.B....TT.T...Q....T....TT
 TT.......................==.U.....TTT............TTT
 TT...B.B.................==......TT.......Q.......TT
-TT....,..S,...........,..==....r...............T..TT
+TT....,..S,...........,..7=....r...............T..TT
 TT...,.......,......S....==...S,........T.T..T,...TT
 TT....,......,...,.......==r.....TT..TT......T....TT
 TT.......................==..,......T.....TT.TT...TT

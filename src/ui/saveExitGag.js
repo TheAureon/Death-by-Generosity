@@ -31,6 +31,8 @@ DBG.UI.SaveExitGag = class SaveExitGag {
     if (this.busy) return;
     if (this.bag.length === 0) this.bag = Phaser.Utils.Array.Shuffle(DBG.data.jokes.saveExitFailures.slice());
     const failure = this.bag.pop();
+    // The "Save" half genuinely works now. It's only the "Exit" half that doesn't.
+    DBG.Save.save();
     const fn = this[failure.effect] || this.message;
     this.busy = true;
     fn.call(this, failure.lines, () => {

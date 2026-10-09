@@ -23,7 +23,7 @@ characters and objects, and y-sorting so characters walk behind trees.
 4. Dumb NPC AI, combat, hazards, "gifted to death" tally (done)
 5. Starting village (first fun test)
 6. Loot loop (done)
-7. World memory and saving
+7. World memory and saving (done)
 8. Regions, fast travel, gating
 9. Ending and polish
 
@@ -61,4 +61,12 @@ Brunhilde, Reginald and the Mayor start with gear, so they'll fight right away.
 - Drops: monster bits (stack in the bag) and rare gear.
 - Brunhilde forges bits into gear (data/recipes.js), so there is always
   something to give away.
-- Known gap until Milestone 7: leaving a map resets it (villagers lose gifts).
+
+## World memory and saving
+- NPCs remember their gear across maps and saves; items on the ground stay.
+- Ranks (data/npcs.js "ranks"): strong NPCs get a title, greeting and an
+  everyday behaviour ("brag", or "toll" for Rudy, Lord of the Road, who
+  takes a monster bit when you pass and drops his hoard when he dies).
+- Death: a replacement arrives with a numbered name (Farmer Bob II).
+- Save slot in localStorage; autosave on map change / gift / death / craft;
+  Journal (J) has save, load, new game. Save & Exit saves, then fails to exit.

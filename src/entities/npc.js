@@ -9,6 +9,11 @@
 //   "fight" — a FightBrain (src/ai/fightBrain.js) drives them; they ignore
 //             hazards, so they can stumble into water, lava, pits, cliffs
 //   "dead"  — playing a death animation, then removed
+//
+// World memory (src/systems/worldMemory.js) keeps their gear between maps
+// and saves. Strong enough people earn a RANK (new title, greeting, and an
+// everyday behaviour: "brag" = strut around boasting, "toll" = charge you
+// monster bits to walk past).
 // Data comes from data/npcs.js.
 // ---------------------------------------------------------------------------
 (function () {
@@ -23,7 +28,9 @@
       scene.physics.add.existing(this);
       this.def = DBG.data.npcs[id];
       this.id = id;
-      this.name = this.def.name;
+      this.memory = DBG.Memory.npc(id);
+      this.baseName = this.def.name + DBG.Memory.suffix(this.memory.generation);
+      this.name = this.baseName;
       this.alive = true;
       this.mode = "calm";
       this.locked = false; // true while a scripted animation (fall, trip...) plays
@@ -46,9 +53,12 @@
       this.layers = {}; // slot -> sprite
       this.recalcStats();
       this.hp = this.stats.maxHp;
-      // Some people already own a little gear (data/npcs.js "startingGear")
-      (this.def.startingGear || []).forEach((itemId) => this.equip(itemId));
+      // Whatever they wore last time (or their "startingGear" the first time)
+      this.memory.gear.slice().forEach((itemId) => this.equip(itemId));
       this.hp = this.stats.maxHp;
+      this.updateRank();
+      this.bragTimer = Phaser.Math.FloatBetween(4, 8);
+      this.tollTimer = 0;
     }
 
     // ---- Gear ---------------------------------------------------------------
@@ -80,7 +90,20 @@
       this.recalcStats();
       this.hp += this.stats.maxHp - hpBefore;
       this.syncLayers();
+      this.memory.gear = Object.values(this.gear); // the world remembers
+      this.updateRank();
       return old;
+    }
+
+    /** Pick up a rank (title + behaviour) if they're strong enough. */
+    updateRank() {
+      this.rank = DBG.Memory.rankFor(this);
+      this.name = this.rank ? this.rank.title : this.baseName;
+    }
+
+    /** What they say when you walk up (their rank changes it). */
+    greetingLine() {
+      return (this.rank && this.rank.greeting) || this.def.greeting;
     }
 
     /** Make every gear layer match the body's frame, position, size, tint and depth. */
@@ -241,12 +264,17 @@
     think() {
       this.thinkTimer = Phaser.Math.FloatBetween(1.5, 4);
       if (Math.random() < 0.4) { this.target = null; return; } // just stand around
-      const r = (this.def.wander || 2) * DBG.data.settings.tileSize;
+      // Braggarts strut around twice as far
+      const strut = this.rank && this.rank.idle === "brag" ? 2 : 1;
+      const r = (this.def.wander || 2) * strut * DBG.data.settings.tileSize;
       this.target = { x: this.home.x + Phaser.Math.Between(-r, r), y: this.home.y + Phaser.Math.Between(-r, r) };
     }
 
-    /** Calm mode: stroll about. Returns the velocity chosen. */
+    /** Calm mode: stroll about (and do their rank's everyday thing). */
     wander(dt, hero, frozen) {
+      const idle = this.rank && this.rank.idle;
+      if (idle === "toll") return this.tollBooth(dt, hero);
+      if (idle === "brag") this.brag(dt, hero);
       this.thinkTimer -= dt;
       if (this.thinkTimer <= 0) this.think();
       let vx = 0, vy = 0;
@@ -260,6 +288,39 @@
       // Gave up on a spot they can't reach (bumped into something)
       if (this.target && this.body.blocked.none === false) this.target = null;
       if (vx === 0 && vy === 0 && hero && Phaser.Math.Distance.Between(this.x, this.y, hero.x, hero.y) < 48) this.face(hero);
+    }
+
+    /** Rank behaviour "brag": every so often, boast (when the hero can hear). */
+    brag(dt, hero) {
+      if ((this.bragTimer -= dt) > 0) return;
+      this.bragTimer = Phaser.Math.FloatBetween(7, 12);
+      const lines = this.rank.brags || [];
+      if (lines.length && hero && Phaser.Math.Distance.Between(this.x, this.y, hero.x, hero.y) < 140 && !this.bubble) {
+        this.say(Phaser.Utils.Array.GetRandom(lines), 2200);
+      }
+    }
+
+    /**
+     * Rank behaviour "toll": stand guard at home. When the hero walks past,
+     * take one monster bit from their bag. It goes into this NPC's hoard,
+     * which spills out if they die.
+     */
+    tollBooth(dt, hero) {
+      const back = Phaser.Math.Distance.Between(this.x, this.y, this.home.x, this.home.y);
+      if (back > 3) this.scene.physics.moveTo(this, this.home.x, this.home.y, this.stats.speed);
+      else this.setVelocity(0, 0);
+      this.tollTimer -= dt;
+      if (!hero || this.tollTimer > 0 || Phaser.Math.Distance.Between(this.x, this.y, hero.x, hero.y) > 28) return;
+      this.tollTimer = 20;
+      this.face(hero);
+      const inv = DBG.state.inventory;
+      const i = inv.slots.findIndex((id) => id && DBG.data.items[id].slot === "material");
+      const J = DBG.data.jokes;
+      if (i < 0) return this.say(J.tollBroke, 2500);
+      const itemId = inv.removeAt(i);
+      this.memory.hoard.push(itemId);
+      this.say(J.tollPaid.replace("{item}", DBG.data.items[itemId].name), 2500);
+      DBG.Save.autosave();
     }
 
     /** Called every frame by the scene. */
