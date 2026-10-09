@@ -20,7 +20,7 @@ characters and objects, and y-sorting so characters walk behind trees.
 1. Foundation (done)
 2. The cursed hero: stats, regen, thorns, HUD, broken Esc, Save & Exit gag (done)
 3. Gifting system (done)
-4. Dumb NPC AI, combat, hazards, "gifted to death" tally
+4. Dumb NPC AI, combat, hazards, "gifted to death" tally (done)
 5. Starting village (first fun test)
 6. Loot loop
 7. World memory and saving
@@ -35,3 +35,10 @@ characters and objects, and y-sorting so characters walk behind trees.
 - NPCs are drawn in layers (person + one sprite per worn item) so real art
   can replace each piece separately. Gifting an item into a filled slot
   hands the old item back to the hero.
+- Fighting: talk to someone (E) -> "Please fight me". They refuse if they
+  have no gear. Quirks per NPC (data/npcs.js) pick their silly behaviours.
+- Hazards: lava + pits always kill; water kills if gear defense >= 50,
+  otherwise they crawl out soggy; cliffs drop them to the ground below.
+- Dead NPCs drop their gear and a "suspiciously similar" one respawns
+  (settings.npcRespawnSeconds). Milestone 7 may change this (world memory).
+- Flattening someone yourself (F) counts as a wasted attempt, not a gift-death.

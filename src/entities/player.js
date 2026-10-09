@@ -3,6 +3,7 @@
 //   - Walking with WASD / arrow keys, 8 directions, walk animation, shadow
 //   - Stats from data/hero.js: huge HP, constant regen, defense, thorns
 //   - K = punch yourself (it never works, but it's a nice way to see regen)
+//   - F = attack directly (flattens people; counts as a wasted attempt)
 // Tells the UI about health changes with game event "hero-hp".
 // ---------------------------------------------------------------------------
 (function () {
@@ -40,6 +41,8 @@
         up2: K.UP, down2: K.DOWN, left2: K.LEFT, right2: K.RIGHT,
       });
       scene.input.keyboard.on("keydown-K", this.punchSelf, this);
+      scene.input.keyboard.on("keydown-F", this.strike, this);
+      this.strikeReadyAt = 0;
 
       this.emitHp();
     }
@@ -66,6 +69,23 @@
       this.scene.time.delayedCall(120, () => this.clearTint());
       DBG.Combat.popNumber(this.scene, this, "-" + DBG.Combat.fmt(this.stats.maxHp - 1), DBG.Combat.COLORS.hero);
       this.scene.game.events.emit("toast", lines[this.selfPunchCount++ % lines.length]);
+    }
+
+    /**
+     * F: attack directly. You CAN... but anyone you hit is instantly
+     * flattened, and it doesn't help you die. WorldScene decides what's hit.
+     */
+    strike() {
+      const s = this.scene;
+      if (s.time.now < this.strikeReadyAt) return;
+      this.strikeReadyAt = s.time.now + 350;
+      const dir = this.facing === "side" ? { x: this.flipX ? 1 : -1, y: 0 } : { x: 0, y: this.facing === "up" ? -1 : 1 };
+      const cx = this.x + dir.x * 14, cy = this.y - 8 + dir.y * 14;
+      // Swipe effect
+      const fx = s.add.image(cx, cy, "slash").setDepth(this.y + 5).setAlpha(0.9)
+        .setAngle(dir.x > 0 ? 0 : dir.x < 0 ? 180 : dir.y > 0 ? 90 : -90);
+      s.tweens.add({ targets: fx, alpha: 0, scale: 1.3, duration: 180, onComplete: () => fx.destroy() });
+      s.events.emit("hero-strike", { x: cx, y: cy, radius: 16, damage: this.stats.attack });
     }
 
     emitHp() {

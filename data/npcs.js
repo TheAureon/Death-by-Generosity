@@ -8,6 +8,11 @@
 //   "greeting"  : said when you walk up to them
 //   "giftLines" : said after receiving a gift. {item} = the item's name
 //   "swapLine"  : said when they hand back what they were wearing before
+//   "fightStart": said when you ask them to fight (and they have gear)
+//   "refuseFight": said when you ask them to fight with no gear
+//   "quirks"    : silly fighting habits and how likely each is (bigger =
+//                 more often). Options: wrongWay, chicken, fleeBuff, trip,
+//                 selfHit. "attack" is how often they just try to fight.
 // ===========================================================================
 DBG.data.npcs = {
   "bob": {
@@ -21,7 +26,10 @@ DBG.data.npcs = {
       "Golly. I feel... dangerous.",
       "Is this a gift or a threat? Either way, thanks!"
     ],
-    "swapLine": "Here, take back my old {item}. Fair's fair."
+    "swapLine": "Here, take back my old {item}. Fair's fair.",
+    "fightStart": "Alright! I'll fight ya! Hold still!",
+    "refuseFight": "Fight you? With what, my turnip? Give me something first!",
+    "quirks": { "attack": 3, "wrongWay": 3, "chicken": 2, "trip": 1 }
   },
   "gertrude": {
     "name": "Grandma Gertrude",
@@ -34,7 +42,10 @@ DBG.data.npcs = {
       "My hip says no, but my heart says FIGHT.",
       "I'll knit a cosy for this {item}, dear."
     ],
-    "swapLine": "Take this old {item} back, dear, it's cluttering my hands."
+    "swapLine": "Take this old {item} back, dear, it's cluttering my hands.",
+    "fightStart": "In my day we fought uphill both ways! HAVE AT YOU!",
+    "refuseFight": "With these knitting needles? Bring me something proper, dear.",
+    "quirks": { "attack": 2, "selfHit": 2, "fleeBuff": 2, "trip": 2 }
   },
   "kevin": {
     "name": "Kevin",
@@ -47,6 +58,9 @@ DBG.data.npcs = {
       "Mom is gonna freak out about this {item}.",
       "I'm basically the main character now."
     ],
-    "swapLine": "You can have my old {item}. It's not cool anymore."
+    "swapLine": "You can have my old {item}. It's not cool anymore.",
+    "fightStart": "SICK. Okay, okay, I'm gonna destroy you. Watch.",
+    "refuseFight": "Bro I'm literally holding nothing. Gimme a sword first.",
+    "quirks": { "attack": 2, "wrongWay": 2, "fleeBuff": 2, "chicken": 2, "selfHit": 1 }
   }
 };

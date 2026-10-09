@@ -15,6 +15,9 @@ DBG.data.settings = {
   // Player walking speed in pixels per second.
   "playerSpeed": 90,
 
+  // Seconds before someone who died comes back (as a "similar" person)
+  "npcRespawnSeconds": 10,
+
   // Which map to load when the game starts (file name in data/maps/).
   "startMap": "test_meadow"
 };

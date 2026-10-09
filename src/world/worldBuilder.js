@@ -5,7 +5,8 @@
 //   3. Edges    — shorelines / lava crust / pit rims, baked into an overlay
 //   4. Objects  — trees, rocks, fences: standing sprites sorted by height,
 //                 so characters can walk behind them
-//   5. Walls    — invisible physics blocks for every solid tile
+//   5. Blocks   — invisible physics blocks: walls, and hazards (separate,
+//                 so fighting NPCs can fall into hazards)
 //   Also lists spawn points for creatures ("spawn") and NPCs ("npc").
 // ---------------------------------------------------------------------------
 (function () {
@@ -18,7 +19,8 @@
 
     const groundRT = scene.add.renderTexture(0, 0, pxW, pxH).setOrigin(0).setDepth(DEPTH.ground);
     const edgeRT = scene.add.renderTexture(0, 0, pxW, pxH).setOrigin(0).setDepth(DEPTH.edges);
-    const solids = scene.physics.add.staticGroup();
+    const walls = scene.physics.add.staticGroup();   // block everyone
+    const hazards = scene.physics.add.staticGroup(); // block the hero + calm NPCs
     const objects = [];
     const spawns = []; // { creature | npc, x, y } in pixels (bottom-centre of tile)
 
@@ -77,20 +79,27 @@
         }
       }
 
-      // 5: solid blocks — merge runs of solid tiles in a row into one body
-      let runStart = -1;
+      // 5: solid blocks — merge runs of the same kind in a row into one body.
+      // Walls block everyone. Hazards (water, lava, pits, cliffs) block the
+      // hero and calm NPCs, but angry NPCs can stumble right into them.
+      const kindAt = (x) => {
+        const t = x < map.width ? map.tile(x, y) : null;
+        if (!t || !t.solid) return null;
+        return t.hazard ? "hazard" : "wall";
+      };
+      let runStart = 0, runKind = null;
       for (let x = 0; x <= map.width; x++) {
-        const solid = x < map.width && map.tile(x, y).solid;
-        if (solid && runStart < 0) runStart = x;
-        if (!solid && runStart >= 0) {
+        const kind = kindAt(x);
+        if (kind === runKind) continue;
+        if (runKind) {
           const w = (x - runStart) * S;
           const block = scene.add.zone(runStart * S + w / 2, y * S + S / 2, w, S);
-          solids.add(block);
-          runStart = -1;
+          (runKind === "hazard" ? hazards : walls).add(block);
         }
+        runStart = x; runKind = kind;
       }
     }
 
-    return { map, pixelWidth: pxW, pixelHeight: pxH, solids, objects, spawns };
+    return { map, pixelWidth: pxW, pixelHeight: pxH, walls, hazards, objects, spawns };
   };
 })();

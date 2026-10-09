@@ -2,7 +2,7 @@
 // Combat rules, shared by everything that can hit or be hit.
 //
 // A "fighter" is any object with:
-//   x, y, stats { defense, thorns }, takeDamage(amount, source), alive
+//   x, y, stats { defense, thorns }, takeDamage(amount, source, cause), alive
 //
 // The hero's thorns: whoever hits the hero takes (their raw hit x thorns)
 // straight back. Thorns damage never bounces again (no infinite ping-pong).
@@ -19,7 +19,7 @@
 
     const defense = (target.stats && target.stats.defense) || 0;
     const dealt = Math.max(1, Math.round(raw - defense));
-    target.takeDamage(dealt, attacker);
+    target.takeDamage(dealt, attacker, "hit");
     popNumber(scene, target, "-" + fmt(dealt), target.isHero ? COLORS.hero : COLORS.normal);
 
     // Thorns: punish the attacker with their own hit, multiplied
@@ -27,7 +27,7 @@
     const thorns = (target.stats && target.stats.thorns) || 0;
     if (thorns > 0 && attacker && attacker.alive) {
       reflected = Math.round(raw * thorns);
-      attacker.takeDamage(reflected, null);
+      attacker.takeDamage(reflected, target, "thorns");
       popNumber(scene, attacker, "THORNS -" + fmt(reflected), COLORS.thorns, 6);
     }
     return { dealt, reflected };

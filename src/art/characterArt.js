@@ -122,6 +122,49 @@
     return pc;
   }
 
+  /** Chicken: 12x12, frame 0 = standing, 1 = step / peck. Faces left. */
+  function chicken(step) {
+    const pc = new PixelCanvas(12, 12);
+    const y = step ? 1 : 0;
+    pc.circle(6, 6 + y, 4, "#f4f1e8", 3);          // body
+    pc.rect(8, 3 + y, 3, 3, "#d8d8e0");             // tail
+    pc.circle(3, 3 + y, 2, "#f4f1e8");              // head
+    pc.px(3, 0 + y, P.flowerRed); pc.px(2, 1 + y, P.flowerRed); // comb
+    pc.px(0, 3 + y, P.flowerYellow); pc.px(1, 3 + y, P.flowerYellow); // beak
+    pc.px(2, 2 + y, P.eye);
+    pc.px(5, 10, P.flowerYellow); pc.px(7, step ? 9 : 10, P.flowerYellow); // legs
+    pc.px(5, 11, P.flowerYellow); pc.px(7, step ? 10 : 11, P.flowerYellow);
+    pc.outline(P.outline);
+    return pc;
+  }
+
+  /** Little 5x5 star for "dazed" and sparkles. */
+  function star() {
+    const pc = new PixelCanvas(5, 5);
+    pc.rect(2, 0, 1, 5, "#fff0a8"); pc.rect(0, 2, 5, 1, "#fff0a8"); pc.px(2, 2, "#ffffff");
+    return pc;
+  }
+
+  /** Pile of ash (what's left after lava). */
+  function ash() {
+    const pc = new PixelCanvas(14, 6);
+    pc.circle(7, 4, 6, "#3c3438", 2.5); pc.circle(6, 3, 3, "#5a5056", 1.5); pc.px(9, 2, P.lavaLight);
+    pc.outline(P.outline);
+    return pc;
+  }
+
+  /** The hero's sword swipe: a white crescent, drawn facing right. */
+  function slash() {
+    const pc = new PixelCanvas(20, 24);
+    for (let a = -1.2; a <= 1.2; a += 0.04) {
+      for (let r = 8; r <= 11; r++) {
+        const x = Math.round(4 + Math.cos(a) * r), y = Math.round(12 + Math.sin(a) * r);
+        pc.px(x, y, r >= 10 ? "#ffffff" : "#bfe8ff");
+      }
+    }
+    return pc;
+  }
+
   /** Creates the hero/dummy sprite sheets and their animations. */
   DBG.Art.createCharacterArt = function (scene) {
     addSpriteSheet(scene, "dummy", [dummy(false), dummy(true)]);
@@ -129,6 +172,10 @@
     const spark = new PixelCanvas(2, 2);
     spark.rect(0, 0, 2, 2, "#ffffff");
     DBG.Art.addTexture(scene, "spark", spark); // white, so it can be tinted any colour
+    addSpriteSheet(scene, "chicken", [chicken(0), chicken(1)]);
+    DBG.Art.addTexture(scene, "star", star());
+    DBG.Art.addTexture(scene, "ash", ash());
+    DBG.Art.addTexture(scene, "slash", slash());
 
     const frames = [];
     ["down", "up", "side"].forEach((dir) => [0, 1, 2].forEach((s) => frames.push(hero(dir, s))));

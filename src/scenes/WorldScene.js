@@ -1,7 +1,11 @@
 // ---------------------------------------------------------------------------
-// WorldScene: the map, the player, creatures, NPCs, and the camera.
-// Also handles the interact key (E): walk up to an NPC and press E to open
-// the gift menu (the menu itself lives in the UI scene).
+// WorldScene: the map, the hero, creatures, NPCs, chickens, dropped items,
+// and the camera.
+//
+// Talking: walk up to an NPC and press E. The UI scene shows the choices
+// (give a gift / please fight me) and tells us what was picked.
+// Deaths: NPCs announce "npc-died"; we count it, drop their gear, and bring
+// a "suspiciously similar" replacement back later.
 // ---------------------------------------------------------------------------
 DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
   constructor() {
@@ -19,7 +23,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     // Spawn the hero standing on the "P" tile
     const start = this.map.playerStart;
     this.player = new DBG.Entities.Player(this, start.x * S + S / 2, start.y * S + S - 2);
-    this.physics.add.collider(this.player, this.world.solids);
+    this.physics.add.collider(this.player, [this.world.walls, this.world.hazards]);
 
     // Creatures placed on the map (data/creatures.js)
     this.creatures = this.world.spawns.filter((s) => s.creature).map((s) => {
@@ -29,26 +33,41 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
       return new Behavior(this, s.x, s.y, data);
     }).filter(Boolean);
 
-    // NPCs placed on the map (data/npcs.js)
-    this.npcs = this.world.spawns.filter((s) => s.npc).map((s) => {
-      if (!DBG.data.npcs[s.npc]) { console.warn(`Unknown NPC "${s.npc}"`); return null; }
-      return new DBG.Entities.NPC(this, s.x, s.y, s.npc);
-    }).filter(Boolean);
-    this.physics.add.collider(this.npcs, this.world.solids);
-    this.physics.add.collider(this.player, this.npcs);
+    // NPCs placed on the map (data/npcs.js). This array is changed in place
+    // when people die and respawn, so the colliders below keep working.
+    this.npcs = [];
+    this.world.spawns.filter((s) => s.npc).forEach((s) => {
+      if (!DBG.data.npcs[s.npc]) return console.warn(`Unknown NPC "${s.npc}"`);
+      this.npcs.push(new DBG.Entities.NPC(this, s.x, s.y, s.npc));
+    });
+    this.physics.add.collider(this.npcs, this.world.walls);
+    // Hazards only stop calm people. Angry people walk right in.
+    this.physics.add.collider(this.npcs, this.world.hazards, null, (npc) => npc.mode === "calm");
+    this.physics.add.collider(this.player, this.npcs, null, (p, npc) => npc.alive);
 
-    // Interact: E (or Space) next to an NPC opens the gift menu
+    this.chickens = [];
+    this.pickups = [];
+    this.physics.add.collider(this.chickens, [this.world.walls, this.world.hazards]);
+
+    // Interact: E (or Space) next to a calm NPC
     this.interactRange = 26;
-    this.prompt = this.add.text(0, 0, "E: Gift", {
+    this.prompt = this.add.text(0, 0, "E: Talk", {
       fontFamily: '"Courier New", monospace', fontStyle: "bold", fontSize: "7px",
       color: "#fff6d8", stroke: "#2b1d24", strokeThickness: 2,
     }).setOrigin(0.5, 1).setDepth(99998).setVisible(false);
     const interact = () => this.interact();
     this.input.keyboard.on("keydown-E", interact);
     this.input.keyboard.on("keydown-SPACE", interact);
-    // The UI scene tells us which item was picked
-    this.game.events.on("gift-chosen", this.onGiftChosen, this);
-    this.events.once("shutdown", () => this.game.events.off("gift-chosen", this.onGiftChosen, this));
+
+    // Messages from the UI scene and from our own NPCs
+    const listen = (name, fn) => {
+      this.game.events.on(name, fn, this);
+      this.events.once("shutdown", () => this.game.events.off(name, fn, this));
+    };
+    listen("gift-chosen", this.onGiftChosen);
+    listen("fight-request", this.onFightRequest);
+    this.events.on("npc-died", this.onNpcDied, this);
+    this.events.on("hero-strike", this.onHeroStrike, this);
 
     // Camera: follow smoothly, never show past the map edges, crisp zoom
     const cam = this.cameras.main;
@@ -71,12 +90,14 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     if (this.prompt) this.prompt.setResolution(this.cameras.main.zoom * 2);
   }
 
-  /** The closest living NPC within reach of the hero, or null. */
+  // ---- Talking, gifting, fighting -----------------------------------------
+
+  /** The closest calm, living NPC within reach of the hero, or null. */
   nearestNPC(range = this.interactRange) {
     let best = null, bestDist = range;
     this.npcs.forEach((n) => {
       const d = Phaser.Math.Distance.Between(this.player.x, this.player.y, n.x, n.y);
-      if (n.alive && d <= bestDist) { best = n; bestDist = d; }
+      if (n.alive && n.mode === "calm" && d <= bestDist) { best = n; bestDist = d; }
     });
     return best;
   }
@@ -85,28 +106,105 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     const npc = this.nearestNPC();
     if (!npc) return;
     npc.face(this.player);
-    this.game.events.emit("open-gift", npc);
+    this.game.events.emit("talk-to", npc);
   }
 
   onGiftChosen(npc, inventoryIndex) {
-    DBG.Gifting.give(this, npc, inventoryIndex);
+    if (npc.alive) DBG.Gifting.give(this, npc, inventoryIndex);
   }
+
+  onFightRequest(npc) {
+    if (!npc.alive || npc.mode !== "calm") return;
+    if (Object.keys(npc.gear).length === 0) {
+      npc.say(npc.def.refuseFight, 3000);
+      return;
+    }
+    npc.startFight(this.player);
+  }
+
+  /** The hero swung at something (F). Everything in range gets flattened. */
+  onHeroStrike(hit) {
+    const inRange = (o) => o.alive && Phaser.Math.Distance.Between(o.x, o.y - 8, hit.x, hit.y) <= hit.radius + 6;
+    let flattenedSomeone = false;
+    this.npcs.filter(inRange).forEach((n) => {
+      n.takeDamage(hit.damage, this.player, "hero");
+      flattenedSomeone = true;
+    });
+    this.creatures.filter(inRange).forEach((c) => c.takeDamage(hit.damage, this.player, "hero"));
+    this.chickens.filter(inRange).forEach((c) => c.takeDamage());
+    if (flattenedSomeone) this.game.events.emit("wasted");
+  }
+
+  /** Someone died: count it, tell the player why, drop gear, respawn later. */
+  onNpcDied(npc, cause) {
+    const tally = DBG.state.tally;
+    if (cause === "hero") tally.wasted++;
+    else tally.gifted++;
+    this.game.events.emit("tally-changed", tally);
+
+    const deaths = DBG.data.jokes.deaths;
+    const lines = deaths[cause] || deaths.thorns;
+    this.game.events.emit("toast", Phaser.Utils.Array.GetRandom(lines).split("{name}").join(npc.name));
+
+    // Their gear pops out where they last stood safely
+    Object.values(npc.gear).forEach((itemId) => {
+      this.pickups.push(DBG.Entities.ItemPickup.drop(this, npc.lastSafe.x, npc.lastSafe.y, itemId));
+    });
+
+    // A replacement moves in after a while
+    const idx = this.npcs.indexOf(npc);
+    if (idx >= 0) this.npcs.splice(idx, 1);
+    this.time.delayedCall(DBG.data.settings.npcRespawnSeconds * 1000, () => {
+      const fresh = new DBG.Entities.NPC(this, npc.home.x, npc.home.y, npc.id);
+      this.npcs.push(fresh);
+      fresh.setAlpha(0);
+      this.tweens.add({ targets: fresh, alpha: 1, duration: 500 });
+      const lines = DBG.data.jokes.respawn;
+      this.game.events.emit("toast", Phaser.Utils.Array.GetRandom(lines).split("{name}").join(npc.name));
+    });
+  }
+
+  /** Called by a FightBrain: a chicken appears and runs from `chaser`. */
+  spawnChicken(x, y, chaser) {
+    // Put it on walkable ground so it doesn't start inside a wall
+    const S = DBG.data.settings.tileSize;
+    const t = this.map.tile(Math.floor(x / S), Math.floor((y - 2) / S));
+    if (!t || t.solid) { x = chaser.x; y = chaser.y + 12; }
+    const c = new DBG.Entities.Chicken(this, x, y, chaser);
+    this.chickens.push(c);
+    return c;
+  }
+
+  // ---- Every frame -----------------------------------------------------------
 
   update(time, deltaMs) {
     const dt = Math.min(deltaMs / 1000, 0.1); // seconds; capped after tab switches
     this.player.update(dt);
     this.creatures.forEach((c) => c.update(dt, this.player));
     const target = this.nearestNPC();
-    this.npcs.forEach((n) => n.update(dt, this.player, n === target)); // in reach = stand still
+    this.npcs.slice().forEach((n) => n.update(dt, this.player, n === target)); // in reach = stand still
+
+    // Chickens (remove the ones that left)
+    for (let i = this.chickens.length - 1; i >= 0; i--) {
+      if (!this.chickens[i].active) this.chickens.splice(i, 1);
+      else this.chickens[i].update(dt);
+    }
+
+    // Walk over dropped items to pick them up
+    for (let i = this.pickups.length - 1; i >= 0; i--) {
+      const p = this.pickups[i];
+      if (!p.active) { this.pickups.splice(i, 1); continue; }
+      if (Phaser.Math.Distance.Between(p.x, p.shadow.y, this.player.x, this.player.y) < 12 && p.collect()) this.pickups.splice(i, 1);
+    }
 
     // Greet the hero the first time they come close
     const near = this.nearestNPC(40);
     if (near && !near.greeted) {
       near.greeted = true;
-      DBG.UI.SpeechBubble.say(this, near, near.def.greeting, 3000);
+      near.say(near.def.greeting, 3000);
     }
 
-    // Floating "E: Gift" over whoever is in reach
+    // Floating "E: Talk" over whoever is in reach
     this.prompt.setVisible(!!target && !target.bubble);
     if (target) this.prompt.setPosition(Math.round(target.x), Math.round(target.y - 30));
   }

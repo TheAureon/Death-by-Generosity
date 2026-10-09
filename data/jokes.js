@@ -48,5 +48,42 @@ DBG.data.jokes = {
   ],
 
   // When something would kill the hero (dying isn't unlocked yet!)
-  "deathDenied": "Death politely declined. Regen got there first."
+  "deathDenied": "Death politely declined. Regen got there first.",
+
+  // ---- Fighting (Milestone 4) ---------------------------------------------
+  // {name} = the NPC's name. Shown when someone dies, by cause of death.
+  "deaths": {
+    "thorns":  ["{name} hit you and was hit back. Very hard. By themselves.", "{name} has been thorned out of existence.", "{name} discovered what x10 thorns means."],
+    "lava":    ["{name} walked into lava. With confidence.", "{name} is now extra crispy.", "{name} found out lava is not a warm bath."],
+    "water":   ["{name} sank. The armour was heavy. The lake was deep.", "{name} forgot that metal doesn't float."],
+    "pit":     ["{name} fell into a pit. They're still falling.", "{name} took the express elevator down."],
+    "cliff":   ["{name} tumbled off a cliff and stayed down."],
+    "selfHit": ["{name} hit themselves. Critically.", "{name} won the fight against {name}."],
+    "soggy":   ["{name} crawled out of the water, then gave up.", "{name} was defeated by being slightly damp."],
+    "bonk":    ["{name} charged into a wall. The wall won.", "{name} lost a fight with scenery."],
+    "trip":    ["{name} tripped. Fatally.", "{name} was defeated by their own shoelaces."],
+    "hero":    ["You attacked {name} directly. That's not how dying works.", "You flattened {name}. Wasted attempt.", "{name} is a pancake now. You are still alive. Great job."]
+  },
+
+  // Big text flashed on screen when you flatten someone yourself
+  "wastedAttempt": "WASTED ATTEMPT",
+
+  // Said by NPCs while fighting, by quirk (silly behaviour)
+  "quirkLines": {
+    "wrongWay": ["CHAAAARGE!", "FOR GLORY!", "I'M COMING FOR YOU!"],
+    "chicken":  ["Ooh, a chicken!", "Here chicky chicky...", "Wait. Is that a chicken?"],
+    "fleeBuff": ["WHAT IS THAT GLOW?!", "GET IT OFF ME!", "I'm haunted by my own buff!"],
+    "trip":     ["Whoa—", "My shoelace!", "Who put the ground there?"],
+    "selfHit":  ["Watch this!", "Hiyaaa!", "Like this, right?"],
+    "bonk":     ["Ow. Wall.", "Who put that there?", "I meant to do that."],
+    "soggy":    ["Glub. I'm fine.", "That was... refreshing.", "I can't feel my socks."],
+    "cliff":    ["AAAAaaaa—oof.", "I'm okay!", "Ow, my everything."]
+  },
+
+  // When someone respawns after dying ({name})
+  "respawn": ["A suspiciously similar {name} moves in.", "{name} is back. Nobody asks questions.", "{name}'s identical cousin arrives."],
+
+  // Picking up dropped gear ({item})
+  "pickup": "Got the {item} back. Still warm.",
+  "bagFull": "Your bag is full. The {item} stays on the ground."
 };

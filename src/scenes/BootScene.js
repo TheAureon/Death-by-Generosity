@@ -14,6 +14,7 @@ DBG.Scenes.BootScene = class BootScene extends Phaser.Scene {
     // Fresh game state
     const hero = DBG.data.hero;
     DBG.state.inventory = new DBG.Inventory(hero.inventorySize || 24, hero.startingInventory || []);
+    DBG.state.tally = { gifted: 0, wasted: 0 };
 
     // UI first so it is listening when the world announces the area name
     this.scene.launch("UI");

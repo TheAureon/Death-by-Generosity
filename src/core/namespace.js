@@ -18,12 +18,13 @@ window.DBG = {
     items: {},    // data/items.js   (everything that can be carried/given)
     npcs: {},     // data/npcs.js    (people you can give gifts to)
   },
-  state: {},      // live game state (inventory...), set up in BootScene
+  state: {},      // live game state (inventory, tally...), set up in BootScene
   Art: {},        // src/art/*       (all generated pixel art lives here)
   World: {},      // src/world/*     (map parsing + building)
   Entities: {     // src/entities/*  (player, creatures, later NPCs)
     behaviors: {}, // creature "behavior" name -> class that runs it
   },
+  AI: {},         // src/ai/*        (how NPCs fight, badly)
   Scenes: {},     // src/scenes/*    (Phaser scenes)
   UI: {},         // src/ui/*        (HUD, menus, gags)
 
