@@ -9,9 +9,9 @@
 //   cliff — they tumble down to the ground below and get hurt (maybe fatally)
 // ---------------------------------------------------------------------------
 (function () {
-  const KINDS = ["water", "lava", "pit", "cliff", "forge", "well"];
+  const KINDS = ["water", "lava", "pit", "cliff", "forge", "well", "void"];
   // Which death animation each hazard uses
-  const ANIM = { lava: "burn", forge: "burn", water: "sink", pit: "fall", well: "fall", cliff: "flop" };
+  const ANIM = { lava: "burn", forge: "burn", water: "sink", pit: "fall", well: "fall", void: "fall", cliff: "flop" };
   const SINK_DEFENSE = 50; // gear defense at which you stop floating
 
   /** Hazard name under someone's feet at pixel (x, y), or null. */

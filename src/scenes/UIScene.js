@@ -19,6 +19,7 @@ DBG.Scenes.UIScene = class UIScene extends Phaser.Scene {
     this.choiceMenu = new DBG.UI.ChoiceMenu(this, this.inventoryMenu);
     this.tally = new DBG.UI.Tally(this);
     this.journal = new DBG.UI.JournalMenu(this);
+    this.travelMenu = new DBG.UI.TravelMenu(this);
 
     // Little "Saved" note in the corner whenever the game saves
     this.savedNote = DBG.UI.outlinedText(this, 0, 0, "✓ Saved", 14).setOrigin(1, 1).setAlpha(0).setDepth(990);

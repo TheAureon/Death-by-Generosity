@@ -6,6 +6,7 @@
 DBG.Art.createAll = function (scene) {
   DBG.Art.createTileArt(scene);
   DBG.Art.createVillageArt(scene);
+  DBG.Art.createRegionArt(scene);
   DBG.Art.createCharacterArt(scene);
   DBG.Art.createPeopleArt(scene);
   DBG.Art.createMonsterArt(scene);

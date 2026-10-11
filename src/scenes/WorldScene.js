@@ -29,6 +29,8 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     else if (arrival) this.player = new DBG.Entities.Player(this, arrival.x, arrival.y);
     else this.player = new DBG.Entities.Player(this, start.x * S + S / 2, start.y * S + S - 2);
     this.leaving = false;
+    this.safePos = { x: this.player.x, y: this.player.y }; // last spot not on an exit
+    this.gateMsgAt = 0;
     this.physics.add.collider(this.player, [this.world.walls, this.world.hazards]);
 
     // Creatures placed on the map (data/creatures.js)
@@ -59,6 +61,10 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     // Chickens placed on the map live with the other chickens (they move)
     this.chickens = this.creatures.filter((c) => c instanceof DBG.Entities.Chicken);
     this.creatures = this.creatures.filter((c) => !(c instanceof DBG.Entities.Chicken));
+    // Waystones you've already touched glow
+    this.waystones = this.world.objects.filter((o) => o.texture.key === "waystone");
+    if (DBG.state.waystones[this.map.id]) this.waystones.forEach((w) => w.setTexture("waystone_lit"));
+
     // Items left lying on this map last time (world memory)
     this.pickups = DBG.Memory.takePickups(this.map.id).map((p) => {
       const pk = new DBG.Entities.ItemPickup(this, p.x, p.y, p.item);
@@ -139,13 +145,14 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
   }
 
   interact() {
+    if (this.leaving) return;
     const npc = this.nearestNPC();
     if (!npc) return this.readSign();
     npc.face(this.player);
     this.game.events.emit("talk-to", npc);
   }
 
-  /** E next to a signpost (a tile with "sign" text) reads it. */
+  /** E next to a signpost reads it; E next to a waystone opens fast travel. */
   readSign() {
     const S = DBG.data.settings.tileSize;
     const px = Math.floor(this.player.x / S), py = Math.floor((this.player.y - 2) / S);
@@ -153,8 +160,29 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
       for (let dx = -1; dx <= 1; dx++) {
         const t = this.map.tile(px + dx, py + dy);
         if (t && t.sign) return this.game.events.emit("toast", t.sign);
+        if (t && t.waystone) return this.useWaystone();
       }
     }
+  }
+
+  /** Touch a waystone: it remembers this place, then offers fast travel. */
+  useWaystone() {
+    if (!DBG.state.waystones[this.map.id]) {
+      DBG.state.waystones[this.map.id] = true;
+      this.waystones.forEach((w) => w.setTexture("waystone_lit"));
+      this.cameras.main.flash(250, 124, 240, 255);
+      this.game.events.emit("toast", DBG.data.jokes.waystoneOn.replace("{place}", this.map.name));
+      DBG.Save.autosave();
+    }
+    this.game.events.emit("open-travel", this.map.id);
+  }
+
+  /** Go somewhere by waystone (called by the travel menu). */
+  travelTo(mapId) {
+    if (this.leaving || mapId === this.map.id) return;
+    this.leaving = true;
+    this.cameras.main.fadeOut(400, 124, 240, 255);
+    this.cameras.main.once("camerafadeoutcomplete", () => this.scene.restart({ mapId, arrival: "waystone" }));
   }
 
   onGiftChosen(npc, inventoryIndex) {
@@ -163,6 +191,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
 
   onFightRequest(npc) {
     if (!npc.alive || npc.mode !== "calm") return;
+    if (npc.def.noFight) return npc.say(npc.def.noFight, 4000);
     if (Object.keys(npc.gear).length === 0) {
       npc.say(npc.def.refuseFight, 3000);
       return;
@@ -244,8 +273,20 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     if (this.leaving) return;
     const S = DBG.data.settings.tileSize;
     const t = this.map.tile(Math.floor(this.player.x / S), Math.floor((this.player.y - 2) / S));
-    if (!t || !t.exit) return;
+    if (!t || !t.exit) { this.safePos = { x: this.player.x, y: this.player.y }; return; }
     if (!DBG.data.maps[t.exit]) return console.warn(`Exit leads to unknown map "${t.exit}"`);
+    // Gates: some roads only open once you've gifted enough people to death
+    const need = t.requires || 0;
+    if (DBG.state.tally.gifted < need && !DBG.data.settings.openAllGates) {
+      this.player.setPosition(this.safePos.x, this.safePos.y);
+      this.player.setVelocity(0, 0);
+      if (this.time.now > this.gateMsgAt) {
+        this.gateMsgAt = this.time.now + 3000;
+        const text = (t.gateText || DBG.data.jokes.gateDefault).replace("{need}", need).replace("{have}", DBG.state.tally.gifted);
+        this.game.events.emit("toast", text);
+      }
+      return;
+    }
     this.leaving = true;
     this.player.setVelocity(0, 0);
     this.cameras.main.fadeOut(300, 0, 0, 0);

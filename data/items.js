@@ -13,7 +13,7 @@
 //          helmet: helm, hat, crown, pot, tophat
 //          shield: round, kite, door
 //          cape  : cape
-//          material: goo, feather, hide, tusk
+//          material: goo, feather, hide, tusk, pelt, shell, ember, scale, shard
 // ===========================================================================
 DBG.data.items = {
   "rusty_sword": {
@@ -162,6 +162,43 @@ DBG.data.items = {
     "description": "Pointy at one end. Gooey at the other."
   },
 
+  "pelt_cape": {
+    "name": "Wolf Pelt Cape", "slot": "cape",
+    "art": { "type": "cape", "color": "#7a7f88", "trim": "#4a4f58" },
+    "stats": { "defense": 25, "maxHp": 60 },
+    "description": "Warm, fluffy, and only slightly haunted by a wolf."
+  },
+  "crab_shield": {
+    "name": "Crab Shell Shield", "slot": "shield",
+    "art": { "type": "round", "color": "#e8642c", "trim": "#b5300f" },
+    "stats": { "defense": 120 },
+    "description": "Still pinches occasionally. Nobody knows how."
+  },
+  "ember_blade": {
+    "name": "Ember Blade", "slot": "weapon",
+    "art": { "type": "sword", "color": "#ffb23a", "trim": "#b5300f" },
+    "stats": { "attack": 350 },
+    "description": "Permanently on fire. Do not sheathe. Do not hug."
+  },
+  "dragon_armor": {
+    "name": "Dragonscale Armour", "slot": "armor",
+    "art": { "type": "plate", "color": "#a8302c", "trim": "#f2c14e" },
+    "stats": { "defense": 500, "maxHp": 300, "speed": -10 },
+    "description": "Made from the dragon's old scales. It's fine. It was shedding anyway."
+  },
+  "dragon_tooth_sword": {
+    "name": "Dragon Tooth Sword", "slot": "weapon",
+    "art": { "type": "sword", "color": "#f4f1e8", "trim": "#a8302c" },
+    "stats": { "attack": 1500 },
+    "description": "Pulled from a dragon. The dragon was not consulted."
+  },
+  "godslayer": {
+    "name": "The Godslayer (Probably)", "slot": "weapon",
+    "art": { "type": "staff", "color": "#f2c14e", "trim": "#9b7bff" },
+    "stats": { "attack": 9000, "maxHp": 500 },
+    "description": "Forged from ancient shards and dragon bits. Might be strong enough. Might."
+  },
+
   // ---- Monster bits (dropped in the Plains) ----
   "slime_goo": {
     "name": "Slime Goo", "slot": "material", "stack": true,
@@ -182,6 +219,33 @@ DBG.data.items = {
     "name": "Boar Tusk", "slot": "material", "stack": true,
     "art": { "type": "tusk", "color": "#f4f1e8", "trim": "#d8d0b8" },
     "description": "A very pointy tooth. Good for spears."
+  },
+
+  // ---- Monster bits (the wider world) ----
+  "wolf_pelt": {
+    "name": "Wolf Pelt", "slot": "material", "stack": true,
+    "art": { "type": "hide", "color": "#7a7f88", "trim": "#4a4f58" },
+    "description": "Fluffy. Smells like adventure and wet dog."
+  },
+  "crab_shell": {
+    "name": "Crab Shell", "slot": "material", "stack": true,
+    "art": { "type": "goo", "color": "#e8642c", "trim": "#b5300f" },
+    "description": "Hard, orange, and still a bit snippy."
+  },
+  "ember_core": {
+    "name": "Ember Core", "slot": "material", "stack": true,
+    "art": { "type": "goo", "color": "#ffb23a", "trim": "#e8541c" },
+    "description": "Hot. Very hot. Why is it in your bag."
+  },
+  "dragon_scale": {
+    "name": "Dragon Scale", "slot": "material", "stack": true,
+    "art": { "type": "hide", "color": "#a8302c", "trim": "#f2c14e" },
+    "description": "Fireproof, shiny, and extremely smug."
+  },
+  "ancient_shard": {
+    "name": "Ancient Shard", "slot": "material", "stack": true,
+    "art": { "type": "tusk", "color": "#9b7bff", "trim": "#d8c8ff" },
+    "description": "Hums with old power. And a little bit of disappointment."
   },
 
   "hero_cape": {

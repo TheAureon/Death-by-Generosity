@@ -48,7 +48,7 @@ TT.f..C.f.=...............HWH+HWWH...........=......,.T...TT
 TT.ffffff.=.................ccc.......========.......r....TT
 TT........============cccccccccccccccc...,................TT
 TT...,...,...RRRRRR...cbccccccccccccbc...B................TT
-TT....,......RRRRRR..,cccccccccccccccc........,...........TT
+TT....,......RRRRRR..,cccccccccccc$ccc........,...........TT
 TT...T.......RRRRRR...cccccccccccccccc....................TT
 TT...........HW+HWH...cccccccOOccccccc..........sss~sss...TT
 TT..........,..=======cccccccOOccccccc........ss~~~~~~~ss.TT

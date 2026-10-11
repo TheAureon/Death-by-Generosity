@@ -21,6 +21,7 @@ DBG.UI.EscGag = class EscGag {
     if (s.choiceMenu) s.choiceMenu.close();
     if (s.craftMenu) s.craftMenu.close();
     if (s.journal) s.journal.close();
+    if (s.travelMenu) s.travelMenu.close();
     const W = s.scale.width, H = s.scale.height;
     s.scene.pause("World");
 

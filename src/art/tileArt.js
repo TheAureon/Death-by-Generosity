@@ -250,7 +250,7 @@
   DBG.Art.animatedTiles = { water: 3, lava: 4, coals: 5 };
 
   /** Which art names get edge overlays where they touch different tiles. */
-  DBG.Art.edgedTiles = ["water", "lava", "pit", "coals", "well"];
+  DBG.Art.edgedTiles = ["water", "lava", "pit", "coals", "well", "void"];
 
   /**
    * Pick the exact texture for a tile, so neighbours can change the look
@@ -276,6 +276,8 @@
         if (!sameArt(0, 1)) return art + "_bot";
         return art + "_mid";
       case "cobble": return "cobble_" + pick(2);
+      case "basalt": return "basalt_" + pick(2);
+      case "rockfloor": return "rockfloor_" + pick(2);
       default: return art;
     }
   };

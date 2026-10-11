@@ -35,8 +35,10 @@ DBG.Entities.Monster = class Monster extends Phaser.Physics.Arcade.Sprite {
     this.dir = { x: 0, y: 0 };
 
     // Pop into the world
+    this.size = data.scale || 1; // big monsters (the dragon) are drawn bigger
+    this.shadow.setScale((this.width / 16) * this.size);
     this.setScale(0);
-    scene.tweens.add({ targets: this, scale: 1, duration: 250, ease: "Back.easeOut" });
+    scene.tweens.add({ targets: this, scale: this.size, duration: 250, ease: "Back.easeOut" });
   }
 
   set(state, seconds) {
@@ -133,7 +135,7 @@ DBG.Entities.Monster = class Monster extends Phaser.Physics.Arcade.Sprite {
   attack(hero) {
     this.cooldown = this.def.attackCooldown;
     this.setFlipX(hero.x > this.x);
-    this.scene.tweens.add({ targets: this, scaleX: 1.25, scaleY: 0.8, duration: 90, yoyo: true });
+    this.scene.tweens.add({ targets: this, scaleX: this.size * 1.25, scaleY: this.size * 0.8, duration: 90, yoyo: true });
     DBG.Combat.hit(this.scene, this, hero, this.def.attack);
     if (this.alive) this.set("recover", 0.5);
   }

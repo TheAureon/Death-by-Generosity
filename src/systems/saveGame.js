@@ -20,6 +20,7 @@ DBG.Save = {
     DBG.state.introShown = false;
     DBG.state.mapId = DBG.data.settings.startMap;
     DBG.state.pos = null;
+    DBG.state.waystones = {}; // map id -> true once you've touched its waystone
   },
 
   /** Everything worth keeping, as plain data. */
@@ -39,6 +40,7 @@ DBG.Save = {
       inventory: { slots: inv.slots.slice(), counts: inv.counts.slice() },
       tally: { ...DBG.state.tally },
       introShown: DBG.state.introShown,
+      waystones: { ...DBG.state.waystones },
       world: JSON.parse(JSON.stringify(DBG.state.world)),
     };
   },
@@ -81,6 +83,7 @@ DBG.Save = {
     });
     DBG.state.tally = { gifted: 0, wasted: 0, ...data.tally };
     DBG.state.introShown = !!data.introShown;
+    DBG.state.waystones = { ...(data.waystones || {}) };
     DBG.state.world = { npcs: {}, pickups: {}, ...data.world };
     // Drop gear that no longer exists in data/items.js (e.g. after editing)
     Object.values(DBG.state.world.npcs).forEach((rec) => {

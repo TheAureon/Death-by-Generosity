@@ -24,7 +24,7 @@ characters and objects, and y-sorting so characters walk behind trees.
 5. Starting village (first fun test)
 6. Loot loop (done)
 7. World memory and saving (done)
-8. Regions, fast travel, gating
+8. Regions, fast travel, gating (done)
 9. Ending and polish
 
 ## Notes
@@ -70,3 +70,23 @@ Brunhilde, Reginald and the Mayor start with gear, so they'll fight right away.
 - Death: a replacement arrives with a numbered name (Farmer Bob II).
 - Save slot in localStorage; autosave on map change / gift / death / craft;
   Journal (J) has save, load, new game. Save & Exit saves, then fails to exit.
+
+## The world map
+- Little Givington (start) -> south -> The Plains
+- The Plains -> west -> The Lake;  east -> The Forest;  south -> Central City (gate 1)
+- Central City -> east -> Guard Town (gate 3)
+- Guard Town -> south -> Knight Fortress (gate 5)
+- Knight Fortress -> east -> Lava Fields (gate 7)
+- Lava Fields -> north -> Dragon Mountain (gate 9)
+- Dragon Mountain -> north -> The Ancient Realm (gate 12)
+
+Gates count "gifted to death". Each region has a waystone (fast travel),
+new monsters and loot, and villagers with signature failures:
+Old Finn (wades in to check his nets), Moss (flees his own glow), Captain
+Valeria (a true warrior: high HP, survives a few thorn hits), Merchant Gus
+(haggles while backing into the fountain), Bard Fennick, Sir Lancelittle,
+Sergeant Brick, Guards Pete & Repeat, Dame Ironsides (charges off the
+drawbridge into the moat), Sir Clankston (rinses his armour in the moat),
+Ignatius (juggles lava), Derek the Dragon Fan (runs off cliffs), and
+Bartholomew, an Old God (won't fight yet: that's the ending, Milestone 9).
+Grumbold the Ancient Dragon survives one thorns hit, then not the second.

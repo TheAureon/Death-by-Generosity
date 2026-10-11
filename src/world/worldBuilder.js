@@ -67,6 +67,7 @@
         if (tile.spawn) spawns.push({ creature: tile.spawn, x: x * S + S / 2, y: (y + 1) * S - 1 });
         if (tile.npc) spawns.push({ npc: tile.npc, x: x * S + S / 2, y: (y + 1) * S - 2 });
         if (tile.arrival) spawns.push({ arrival: tile.arrival, x: x * S + S / 2, y: (y + 1) * S - 2 });
+        if (tile.waystone) spawns.push({ arrival: "waystone", x: x * S + S / 2, y: (y + 2) * S - 2 }); // stand just below it
 
         // 4: standing objects, anchored at the bottom-centre of their tile
         if (tile.object) {

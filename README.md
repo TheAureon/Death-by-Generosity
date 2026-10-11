@@ -44,13 +44,22 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/creatures.js` | Creatures like the training dummy (HP, punch strength...) |
 | `data/jokes.js` | All the funny text: Esc messages, Save & Exit failures, etc. |
 | `data/items.js` | Every item: name, slot, stats, colours/shape, description |
-| `data/npcs.js` | People: name, colours, stats, lines, and their silly fighting "quirks" |
+| `data/npcs.js` | Village people (+ Rudy): name, colours, stats, lines, fighting "quirks" |
+| `data/npcs_world.js` | People in the other regions (same format) |
 | `data/creatures.js` | Monsters: stats, loot drops, how they move, respawn time |
 | `data/recipes.js` | What Brunhilde can forge from monster bits |
 
-**Maps:** the game starts in the village (`data/maps/village.js`); the road
-south leads to the Plains (`data/maps/plains.js`). Exits are tiles with
-`"exit"` (which map) and `"arrive"` (which arrival spot) in a map's legend.
+**Maps:** the game starts in the village (`data/maps/village.js`). From the
+Plains, roads lead to the Lake, the Forest and Central City, and on to Guard
+Town, the Knight Fortress, the Lava Fields, Dragon Mountain and the Ancient
+Realm (`data/regions.js` lists them in order). Exits are tiles with `"exit"`
+(which map) and `"arrive"` (which arrival spot) in a map's legend; an exit can
+also have `"requires"` (how many people you must have gifted to death before
+it opens) and `"gateText"`. To open every gate for testing, set
+`"openAllGates": true` in `data/settings.js`.
+
+**Fast travel:** press **E** at a waystone (the glowing carved stones) to
+unlock it and travel between any waystones you've touched.
 To play the old test map, change `"startMap"` in `data/settings.js` to
 `"test_meadow"`.
 
@@ -85,7 +94,7 @@ src/systems/     game rules (combat + thorns, inventory, gifting, hazards,
 src/ai/          fightBrain: how NPCs fight (badly)
 src/entities/    player, training dummy, NPCs (drawn in gear layers),
                  monsters, chickens, dropped items
-src/ui/          HUD pieces: health bar, tally, messages, speech bubbles,
+src/ui/          HUD pieces: health bar, tally, messages, speech bubbles, travel,
                  talk menu, bag/gift menu, forge (crafting) menu, journal, character sheet,
                  Esc + Save & Exit gags
 src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top)

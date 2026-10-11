@@ -66,6 +66,7 @@ DBG.data.jokes = {
     "water":   ["{name} sank. The armour was heavy. The lake was deep.", "{name} forgot that metal doesn't float."],
     "forge":   ["{name} became part of the next batch of swords.", "{name} heated the steel. And themselves.", "{name} is now well-tempered."],
     "well":    ["{name} fell down the well. Echoes are still arriving.", "{name} made a wish. It did not come true.", "{name} is now the well's problem."],
+    "void":    ["{name} fell into the Void. The Void sent back a thank-you note.", "{name} stepped off reality.", "{name} is now everywhere and nowhere. Mostly nowhere."],
     "pit":     ["{name} fell into a pit. They're still falling.", "{name} took the express elevator down."],
     "cliff":   ["{name} tumbled off a cliff and stayed down."],
     "selfHit": ["{name} hit themselves. Critically.", "{name} won the fight against {name}."],
@@ -114,6 +115,12 @@ DBG.data.jokes = {
     "loadedOk": "Loaded your last save. All of your stuff, none of your hope.",
     "exitFails": "This journal has no Exit page. Someone ripped it out. It was you. You forgot."
   },
+
+  // ---- The wider world (Milestone 8) -------------------------------------
+  "waystoneOn": "The waystone glows. {place} is now a fast-travel spot!",
+  "travelTitle": "Waystone Travel",
+  "travelHint": "Touch more waystones to unlock more places.",
+  "gateDefault": "The way is blocked. Gift {need} people to death first. (So far: {have})",
 
   // Crafting at the forge ({item}, {name} = the smith)
   "crafted": "{name} forged a {item}! It's still glowing. Don't touch it. Or do.",

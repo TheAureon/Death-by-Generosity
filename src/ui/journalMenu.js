@@ -16,7 +16,7 @@ DBG.UI.JournalMenu = class JournalMenu {
     ["Q", "BACKSPACE"].forEach((key) => k.on("keydown-" + key, when(() => this.close())));
     k.on("keydown-J", () => {
       if (this.root) return this.close();
-      const busy = ["inventoryMenu", "choiceMenu", "craftMenu"].some((m) => scene[m] && scene[m].isOpen);
+      const busy = ["inventoryMenu", "choiceMenu", "craftMenu", "travelMenu"].some((m) => scene[m] && scene[m].isOpen);
       if (!busy) this.open();
     });
   }
