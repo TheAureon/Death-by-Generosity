@@ -60,6 +60,7 @@ DBG.Entities.Monster = class Monster extends Phaser.Physics.Arcade.Sprite {
     if (dist < d.aggro && !this.noticed) {
       this.noticed = true;
       if (d.shout) DBG.UI.SpeechBubble.say(this.scene, this, d.shout, 800);
+      if (d.shoutSound) DBG.Sfx.play(d.shoutSound);
       this.set("chase", 0);
     } else if (dist > d.aggro * 2.5 && this.noticed) {
       this.noticed = false; // lost interest
@@ -159,6 +160,7 @@ DBG.Entities.Monster = class Monster extends Phaser.Physics.Arcade.Sprite {
     }).setDepth(this.y + 1);
     puff.explode(18);
     s.time.delayedCall(700, () => puff.destroy());
+    DBG.Sfx.play("poof");
     s.events.emit("monster-died", this);
     if (this.bubble) this.bubble.destroy();
     this.shadow.destroy();

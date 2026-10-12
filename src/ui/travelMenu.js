@@ -25,6 +25,7 @@ DBG.UI.TravelMenu = class TravelMenu {
   open(here) {
     if (this.root) return;
     const s = this.scene, C = DBG.UI.colors, J = DBG.data.jokes;
+    DBG.Sfx.play("click");
     this.openedAt = s.time.now;
     s.scene.pause("World");
     // Every region with a map whose waystone you've touched, in world order

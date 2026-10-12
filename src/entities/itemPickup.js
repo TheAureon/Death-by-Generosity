@@ -24,6 +24,7 @@ DBG.Entities.ItemPickup = class ItemPickup extends Phaser.GameObjects.Image {
       this.blockedUntil = s.time.now + 4000;
       return false;
     }
+    DBG.Sfx.play("pickup");
     // Fresh loot gets a quick "+1 Slime Goo"; returned gear gets a message
     if (this.isLoot) DBG.Combat.popNumber(s, s.player, "+1 " + name, DBG.Combat.COLORS.heal, 4);
     else s.game.events.emit("toast", DBG.data.jokes.pickup.replace("{item}", name));

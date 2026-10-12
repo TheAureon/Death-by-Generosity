@@ -41,11 +41,11 @@ DBG.data.jokes = {
 
   // Pressing K: the hero tries to punch themselves
   "selfPunch": [
-    "You punched yourself. Your armour punched back. You're fine.",
-    "Ow? No. Not ow. Regen already fixed it.",
-    "You were at 1 HP for a glorious moment. Then regen happened.",
-    "Self-punch denied by the Cursed Plate. It cares about you.",
-    "You hit yourself with everything you had. The armour sighed."
+    "1 HP! Your regen is sulking for 3 seconds. If only someone with a HUGE weapon were hitting you right now...",
+    "You punched yourself. Your regen is offended and stopped for 3 seconds.",
+    "1 HP. Regen is on a 3-second coffee break. Make it count.",
+    "Ow. Finally, ow. Regen will be back in 3 seconds.",
+    "You hit yourself with everything you had. Regen walked out in protest. Briefly."
   ],
 
   // When the training dummy is destroyed by thorns
@@ -55,8 +55,60 @@ DBG.data.jokes = {
     "A new dummy volunteers. It has not learned anything."
   ],
 
-  // When something would kill the hero (dying isn't unlocked yet!)
-  "deathDenied": "Death politely declined. Regen got there first.",
+  // ---- THE ENDING (when someone finally kills you) -------------------------
+  "ending": {
+    "title": "YOU DIED",
+    "subtitle": "...FINALLY.",
+    "killerShout": "WAIT. DID THAT WORK?!",
+    "killedBy": "Killed by {killer}",
+    "killedByNobody": "Killed by... nobody? Somehow?",
+    "wielding": "wielding the {item} you gave them",
+    "where": "in {place}",
+    // A line about whoever killed you. Add one for anyone (by their id).
+    "byKiller": {
+      "bob": "Bob will tell this story at every harvest festival. The chickens will not believe him.",
+      "gertrude": "Grandma Gertrude has a new story for the grandkids. She will tell it 400 times.",
+      "kevin": "Kevin is now insufferable. Absolutely insufferable.",
+      "brunhilde": "Brunhilde has hung your armour above the forge. It's still cursed. It still likes you.",
+      "reginald": "Sir Reginald finally won a duel. He charged the right way. Once.",
+      "mayor": "The Mayor declared a public holiday. Then made himself Emperor of it.",
+      "rudy": "Rudy is now Lord of the Road AND Lord of You. He charges the ghost a toll.",
+      "finn": "Old Finn says you were the one that got away. You did not get away.",
+      "moss": "Moss says the forest spirits did it. The forest spirits would like it noted that they did not.",
+      "valeria": "Captain Valeria is now Champion of the Realm and the Hero Slayer. Her business cards are very crowded.",
+      "gus": "Merchant Gus is selling 'I Was There' shirts. Prices have gone up.",
+      "fennick": "Bard Fennick wrote a ballad about it. It's three hours long. You're in two verses.",
+      "lancelittle": "Sir Lancelittle is very proud. He's also a bit taller now, somehow.",
+      "brick": "Sergeant Brick filed the paperwork. Cause of death: 'regulations'.",
+      "pete": "Guard Pete did it. Guard Repeat says he helped. He did not help.",
+      "repeat": "Guard Repeat did it! Pete is furious. The chicken saw everything.",
+      "ironsides": "Dame Ironsides looked down for the first time in forty years. At you.",
+      "clankston": "*clank* Sir Clankston *clank* is very sorry *clank* not really *clank*.",
+      "ignatius": "Ignatius has added you to his act. You're the bit at the end.",
+      "derek": "Derek got Grumbold's autograph by showing him your helmet. Worth it, he says.",
+      "bartholomew": "Bartholomew, an Old God, smote you. Gently. Mostly. He'd like a thank-you card.",
+      "dragon": "Grumbold the Ancient Dragon will brag about this for the next thousand years."
+    },
+    "generic": [
+      "Somewhere, a villager is throwing a very confused party.",
+      "Your cursed armour is finally free. It's sitting by the door, waiting for you.",
+      "Your regen tried its best. Its best was three seconds late."
+    ],
+    "statGifted": "People gifted to death along the way",
+    "statWasted": "Wasted attempts (you hit them)",
+    "statGifts": "Gifts given",
+    "statTime": "Time spent trying to die",
+    "statKillers": "Different killers so far (in this browser)",
+    "playAgain": "Play again",
+    "exit": "Exit game",
+    "exiting": "Exiting game...",
+    "exitTruth": "Wait. You know you could have just closed the browser tab this whole time, right? Cmd+W. Every single minute. The whole game.",
+    "achievement": "ACHIEVEMENT UNLOCKED: Could Have Just Closed The Tab"
+  },
+
+  // Pressing M
+  "muted": "Sound off. (Press M again to turn it back on.)",
+  "unmuted": "Sound on.",
 
   // ---- Fighting (Milestone 4) ---------------------------------------------
   // {name} = the NPC's name. Shown when someone dies, by cause of death.

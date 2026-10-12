@@ -16,6 +16,7 @@ DBG.UI.EscGag = class EscGag {
     if (this.busy) return;
     this.busy = true;
     const s = this.scene;
+    DBG.Sfx.play("glitch");
     // Esc can't close menus properly... but it can kill them. Same result.
     if (s.inventoryMenu) s.inventoryMenu.close();
     if (s.choiceMenu) s.choiceMenu.close();

@@ -29,6 +29,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     else if (arrival) this.player = new DBG.Entities.Player(this, arrival.x, arrival.y);
     else this.player = new DBG.Entities.Player(this, start.x * S + S / 2, start.y * S + S - 2);
     this.leaving = false;
+    this.dying = false;
 
     this.physics.add.collider(this.player, [this.world.walls, this.world.hazards]);
 
@@ -170,6 +171,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
       DBG.state.waystones[this.map.id] = true;
       this.waystones.forEach((w) => w.setTexture("waystone_lit"));
       this.cameras.main.flash(250, 124, 240, 255);
+      DBG.Sfx.play("chime");
       this.game.events.emit("toast", DBG.data.jokes.waystoneOn.replace("{place}", this.map.name));
       DBG.Save.autosave();
     }
@@ -266,6 +268,41 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * THE ENDING. Someone finally killed the hero. Slow everything down, let
+   * the hero fall over, then hand over to the EndingScene.
+   * `killer` is whoever landed the blow (an NPC or monster), if anyone.
+   */
+  heroDied(killer) {
+    if (this.dying) return;
+    this.dying = true;
+    const p = this.player, cam = this.cameras.main;
+    p.setVelocity(0, 0);
+    this.physics.pause();
+    DBG.Sfx.play("herodeath");
+    cam.flash(400, 255, 255, 255);
+    cam.shake(400, 0.01);
+    cam.zoomTo(cam.zoom * 1.6, 1800, "Sine.easeInOut");
+    p.setTint(0x9a9a9a);
+    this.tweens.add({ targets: p, angle: 90, duration: 900, delay: 400, ease: "Bounce.easeOut" });
+    if (killer && killer.alive && killer.say) killer.say(DBG.data.jokes.ending.killerShout, 2000);
+
+    // Who did it, and with what?
+    const weaponId = killer && killer.gear && killer.gear.weapon;
+    const info = {
+      killerId: killer ? (killer.id || killer.kind || "unknown") : "unknown",
+      killerName: killer ? killer.name : null,
+      weapon: weaponId ? DBG.data.items[weaponId].name : null,
+      place: this.map.name,
+    };
+    DBG.Ending.record(info);
+    this.time.delayedCall(2600, () => {
+      this.scene.sleep("UI");
+      this.scene.launch("Ending", info);
+      this.scene.pause();
+    });
+  }
+
   /** Walk onto an exit tile: fade out and load the map it leads to. */
   checkExit() {
     if (this.leaving) return;
@@ -304,6 +341,8 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
   update(time, deltaMs) {
     const dt = Math.min(deltaMs / 1000, 0.1); // seconds; capped after tab switches
     if (this.leaving) return;
+    if (this.dying) return; // the ending is playing
+    DBG.state.playSeconds = (DBG.state.playSeconds || 0) + dt;
     this.player.update(dt);
     this.checkExit();
     this.monsters.slice().forEach((m) => m.update(dt, this.player));

@@ -41,6 +41,7 @@ DBG.UI.InventoryMenu = class InventoryMenu {
     const s = this.scene, C = DBG.UI.colors;
     this.mode = mode;
     this.npc = npc;
+    DBG.Sfx.play("click");
     this.openedAt = s.time.now;
     this.selected = 0;
     s.scene.pause("World");

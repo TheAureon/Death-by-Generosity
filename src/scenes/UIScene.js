@@ -35,11 +35,17 @@ DBG.Scenes.UIScene = class UIScene extends Phaser.Scene {
 
     this.banner = DBG.UI.outlinedText(this, 0, 120, "", 32).setOrigin(0.5, 0).setAlpha(0);
     this.hint = DBG.UI.outlinedText(this, 16, 0,
-      "WASD: Move   E: Talk   F: Attack (don't)   I: Bag   J: Journal (save/load)   C: Character   K: Punch self   Esc: Pause (allegedly)", 14)
+      "WASD: Move  E: Talk  F: Attack (don't)  I: Bag  J: Journal  C: Character  K: Punch self  M: Sound  Esc: Pause (allegedly)", 14)
       .setOrigin(0, 1).setAlpha(0.85);
 
     this.layout();
     this.scale.on("resize", this.layout, this);
+
+    // M: sound on/off
+    this.input.keyboard.on("keydown-M", () => {
+      const muted = DBG.Sfx.toggleMute();
+      this.toast.show(muted ? DBG.data.jokes.muted : DBG.data.jokes.unmuted);
+    });
 
     // Anything in the game can show a message with game.events.emit("toast", text)
     const onToast = (text) => this.toast.show(text);

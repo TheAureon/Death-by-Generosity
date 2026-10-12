@@ -20,6 +20,7 @@ DBG.data.creatures = {
   //   "drops"    : loot. "chance" from 0 to 1, "min"/"max" how many
   //   "respawnSeconds": how long until another one shows up at its spot
   //   "shout"    : what it yells when it spots you (optional)
+//   "shoutSound": a sound from data/sounds.js to play with it (optional)
   "slime": {
     "name": "Slime", "behavior": "monster", "art": "slime", "color": "#6dd36d", "style": "hop",
     "maxHp": 20, "attack": 4, "speed": 45, "aggro": 70, "attackRange": 14, "attackCooldown": 1.2,
@@ -35,7 +36,7 @@ DBG.data.creatures = {
   "goose": {
     "name": "Angry Goose", "behavior": "monster", "art": "goose", "color": "#f4f1e8", "style": "walk",
     "maxHp": 30, "attack": 8, "speed": 70, "aggro": 90, "attackRange": 16, "attackCooldown": 0.9,
-    "respawnSeconds": 10, "shout": "HONK!",
+    "respawnSeconds": 10, "shout": "HONK!", "shoutSound": "honk",
     "drops": [ { "item": "goose_feather", "chance": 1, "min": 1, "max": 2 }, { "item": "straw_hat", "chance": 0.05 } ]
   },
   "boar": {
@@ -106,7 +107,7 @@ DBG.data.creatures = {
     "name": "Grumbold the Ancient Dragon", "behavior": "monster", "art": "dragon", "color": "#a8302c", "style": "charge",
     "scale": 2,
     "maxHp": 5000, "attack": 400, "speed": 35, "aggro": 160, "attackRange": 40, "attackCooldown": 2.5,
-    "respawnSeconds": 60, "shout": "WHO DARES DISTURB— oh, it's YOU. The shiny one.",
+    "respawnSeconds": 60, "shout": "WHO DARES DISTURB— oh, it's YOU. The shiny one.", "shoutSound": "roar",
     "drops": [ { "item": "dragon_scale", "chance": 1, "min": 3, "max": 5 }, { "item": "dragon_tooth_sword", "chance": 1 } ]
   },
 

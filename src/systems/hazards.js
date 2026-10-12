@@ -37,6 +37,7 @@
     const s = npc.scene;
     npc.lock();
     splash(npc);
+    DBG.Sfx.play("splash");
     s.tweens.chain({
       targets: npc,
       tweens: [
@@ -65,6 +66,7 @@
     if (!land) return npc.die("cliff");
     npc.lock();
     npc.sayQuirk("cliff");
+    DBG.Sfx.play("fall");
     s.tweens.add({ targets: npc, angle: 360, duration: 600 });
     s.tweens.add({
       targets: npc, x: land.x, y: land.y, duration: 600, ease: "Bounce.easeOut",
@@ -84,6 +86,7 @@
     npc.deathCause = hazard;
     npc.setAngle(0);
     const anim = ANIM[hazard] || "flop";
+    DBG.Sfx.play({ burn: "burn", sink: "splash", fall: "fall" }[anim] || "poof");
     if (anim === "burn") {
       // Hop up in surprise, flash, then crumble into ash
       npc.say("HOT HOT HOT", 900);

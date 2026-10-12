@@ -118,7 +118,7 @@ DBG.data.npcs = {
     "stats": { "maxHp": 80, "attack": 6, "defense": 2, "speed": 40 },
     "startingGear": ["smith_hammer"],
     "wander": 2,
-    "greeting": "Need a sword? I make 'em. I don't use 'em. Much.",
+    "greeting": "Need a sword? I make 'em. Nothing I make will dent YOUR armour, mind. You'd need a dragon's tooth for that.",
     "giftLines": [
       "A {item}. Decent work. Not mine, but decent.",
       "Hmm. I'd have tempered this {item} longer.",

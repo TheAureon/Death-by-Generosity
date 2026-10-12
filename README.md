@@ -17,9 +17,25 @@ Controls:
 - **I**: look in your bag
 - **J**: the Journal — the menu that actually works (save, load, new game)
 - **C**: character sheet
-- **K**: punch yourself (it doesn't work)
+- **K**: punch yourself (drops you to 1 HP and stops healing for 3 seconds)
+- **M**: sound on/off
 - **Esc**: pause menu (it doesn't work either)
 - **Save & Exit** button, top-right (you can guess)
+
+## How do I win? (spoilers)
+
+You win by dying. Your cursed armour shrugs off any hit under 1,000 attack,
+so ordinary gear won't do it. You need something monster-sized:
+
+1. Travel to Dragon Mountain (past the Lava Fields) and let Grumbold the
+   dragon attack you. Your thorns handle the rest. He always drops a
+   **Dragon Tooth Sword** (1,500 attack).
+2. Pick it up (walk over it).
+3. Give the sword to anyone (E → gift), then ask them to fight you.
+4. Press **K** to knock yourself down to 1 HP, and stand still. Hope they
+   don't trip over a chicken.
+
+Whoever finally kills you gets their own ending joke. Try them all.
 
 ## Saving
 
@@ -28,6 +44,18 @@ craft), and **Save & Exit** really saves now (it still won't exit). You can
 also save, load, or start a new game from the **Journal** (press **J**).
 Saves live in your web browser, so reopening `index.html` in the same browser
 continues where you left off. To start over: Journal → New game.
+
+## Putting it on a game website (itch.io etc.)
+
+The ready-to-upload file is **`release/death-by-generosity-web.zip`**.
+
+On itch.io: Create new project → Kind of project: **HTML** → upload that ZIP
+→ tick **"This file will be played in the browser"** → set the size to
+1280 × 800 (or tick "Fullscreen button") → Save. Other sites (Newgrounds,
+GameJolt) work the same way: upload the ZIP as an HTML5 game.
+
+If you change anything in `data/`, make a fresh ZIP with
+`python3 scripts/make-release.py` (in Terminal, inside the game folder).
 
 ## Editing the game (no coding needed)
 
@@ -42,7 +70,8 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/regions.js` | The planned world regions |
 | `data/hero.js` | The hero's name, HP, regen, defense, thorns, armour, silly stats |
 | `data/creatures.js` | Creatures like the training dummy (HP, punch strength...) |
-| `data/jokes.js` | All the funny text: Esc messages, Save & Exit failures, etc. |
+| `data/jokes.js` | All the funny text: Esc messages, Save & Exit failures, ending jokes per killer |
+| `data/sounds.js` | Every sound effect, written as notes (pitch, length, wave shape) |
 | `data/items.js` | Every item: name, slot, stats, colours/shape, description |
 | `data/npcs.js` | Village people (+ Rudy): name, colours, stats, lines, fighting "quirks" |
 | `data/npcs_world.js` | People in the other regions (same format) |
@@ -78,6 +107,8 @@ the `test_meadow.js` line.
   `index.html` for the order). There's no build step, so the folder itself is
   the deployable static site.
 - Optional dev server with live reload: `npm install`, then `npm run dev` (Vite).
+- `npm run build` (or `python3 scripts/make-release.py`) packs the upload ZIP
+  into `release/`.
 - Phaser is copied into `vendor/` so no install is needed to play. After
   upgrading Phaser, run `npm run vendor:phaser`.
 - Everything shares one global object, `DBG` (see `src/core/namespace.js`).
@@ -89,13 +120,15 @@ src/art/         ALL generated pixel art (swap in real art here)
 src/world/       map parsing (mapLoader) and building (worldBuilder)
 src/systems/     game rules (combat + thorns, inventory, gifting, hazards,
                  world memory, saving)
+src/audio/       sound effects, synthesized in the browser (no sound files)
 src/ai/          fightBrain: how NPCs fight (badly)
 src/entities/    player, training dummy, NPCs (drawn in gear layers),
                  monsters, chickens, dropped items
 src/ui/          HUD pieces: health bar, tally, messages, speech bubbles, travel,
                  talk menu, bag/gift menu, forge (crafting) menu, journal, character sheet,
                  Esc + Save & Exit gags
-src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top)
+src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top),
+                 Ending (you finally died)
 vendor/          Phaser engine file
 docs/            design notes
 ```

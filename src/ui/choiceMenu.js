@@ -33,6 +33,7 @@ DBG.UI.ChoiceMenu = class ChoiceMenu {
     const s = this.scene;
     if (this.root || this.inventoryMenu.isOpen || (s.craftMenu && s.craftMenu.isOpen) || (s.travelMenu && s.travelMenu.isOpen)) return;
     this.npc = npc;
+    DBG.Sfx.play("click");
     this.openedAt = s.time.now;
     s.scene.pause("World");
 

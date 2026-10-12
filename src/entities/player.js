@@ -47,22 +47,37 @@
       this.emitHp();
     }
 
-    /** Damage from any source. The hero can't die yet — that's the ending. */
-    takeDamage(amount) {
+    /**
+     * Damage from any source. If it ever gets the hero to 0 HP... that's it.
+     * That's the ending. Whoever did it (`source`) gets the credit.
+     */
+    takeDamage(amount, source) {
+      if (!this.alive) return;
       this.hp -= amount;
-      if (this.hp < 1) {
-        this.hp = 1;
-        this.scene.game.events.emit("toast", DBG.data.jokes.deathDenied);
-      }
       this.setTintFill(0xffffff);
-      this.scene.time.delayedCall(80, () => this.clearTint());
+      this.scene.time.delayedCall(80, () => this.active && this.alive && this.clearTint());
+      if (this.hp <= 0) {
+        this.hp = 0;
+        this.emitHp();
+        this.alive = false;
+        this.scene.heroDied(source);
+        return;
+      }
       this.emitHp();
     }
 
-    /** K: try (and fail) to end it all with a punch to the face. */
+    /**
+     * K: punch yourself in the face. Leaves you at 1 HP, and your regen
+     * sulks for a few seconds — a window where something strong enough
+     * could actually finish the job.
+     */
     punchSelf() {
+      if (!this.alive || this.scene.time.now < (this.punchReadyAt || 0)) return;
+      this.punchReadyAt = this.scene.time.now + 1000;
       const lines = DBG.data.jokes.selfPunch;
-      this.hp = 1; // the punch works... for one frame
+      this.hp = 1;
+      this.regenPause = DBG.data.hero.selfPunchRegenPause || 3;
+      DBG.Sfx.play("selfpunch");
       this.emitHp();
       this.scene.cameras.main.shake(150, 0.01);
       this.setTintFill(0xff4444);
@@ -77,7 +92,8 @@
      */
     strike() {
       const s = this.scene;
-      if (s.time.now < this.strikeReadyAt) return;
+      if (!this.alive || s.time.now < this.strikeReadyAt) return;
+      DBG.Sfx.play("swoosh");
       this.strikeReadyAt = s.time.now + 350;
       const dir = this.facing === "side" ? { x: this.flipX ? 1 : -1, y: 0 } : { x: 0, y: this.facing === "up" ? -1 : 1 };
       const cx = this.x + dir.x * 14, cy = this.y - 8 + dir.y * 14;
@@ -94,8 +110,10 @@
 
     /** Called every frame by the scene. dt = seconds since last frame. */
     update(dt) {
-      // --- Constant regen ---
-      if (this.hp < this.stats.maxHp) {
+      if (!this.alive) { this.setVelocity(0, 0); return; }
+      // --- Constant regen (unless it's sulking after a self-punch) ---
+      if (this.regenPause > 0) this.regenPause -= dt;
+      else if (this.hp < this.stats.maxHp) {
         this.hp = Math.min(this.stats.maxHp, this.hp + this.stats.regen * dt);
         this.emitHp();
       }

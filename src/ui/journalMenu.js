@@ -27,6 +27,7 @@ DBG.UI.JournalMenu = class JournalMenu {
 
   open() {
     const s = this.scene, C = DBG.UI.colors, J = DBG.data.jokes.journal;
+    DBG.Sfx.play("click");
     this.openedAt = s.time.now;
     this.confirmNew = false;
     s.scene.pause("World");
@@ -58,7 +59,8 @@ DBG.UI.JournalMenu = class JournalMenu {
     const add = (o) => { root.add(o); return o; };
     add(DBG.UI.text(s, w / 2, 18, J.title, 24).setOrigin(0.5, 0));
     const t = DBG.state.tally;
-    add(DBG.UI.text(s, w / 2, 52, `Gifted to death: ${t.gifted}   ·   Wasted attempts: ${t.wasted}`, 15, C.danger).setOrigin(0.5, 0));
+    const deaths = DBG.Ending.history().length;
+    add(DBG.UI.text(s, w / 2, 52, `Gifted to death: ${t.gifted}   ·   Wasted attempts: ${t.wasted}   ·   Times YOU died: ${deaths}`, 15, C.danger).setOrigin(0.5, 0));
     add(DBG.UI.text(s, 30, 82, J.people, 15, C.textMuted));
     (people.length ? people : [J.nobody]).forEach((line, i) => {
       add(DBG.UI.text(s, 40, 104 + i * lineH, line, 13).setWordWrapWidth(w - 70));

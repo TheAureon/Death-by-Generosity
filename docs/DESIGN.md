@@ -21,15 +21,18 @@ characters and objects, and y-sorting so characters walk behind trees.
 2. The cursed hero: stats, regen, thorns, HUD, broken Esc, Save & Exit gag (done)
 3. Gifting system (done)
 4. Dumb NPC AI, combat, hazards, "gifted to death" tally (done)
-5. Starting village (first fun test)
+5. Starting village (done)
 6. Loot loop (done)
 7. World memory and saving (done)
-8. Regions, fast travel, gating (done)
-9. Ending and polish
+8. Regions, fast travel, open roads (done)
+9. Ending, sound, polish, uploadable build (done)
 
 ## Notes
-- The hero can't die yet: HP stops at 1 ("Death politely declined"). Dying
-  for real is the ending (Milestone 9).
+- Armour: any hit that isn't bigger than the hero's 999 defense does 0
+  ("BLOCKED"). Only monster-sized weapons (Dragon Tooth Sword 1500,
+  Godslayer 9000) or Bartholomew get through.
+- K (punch self) drops HP to 1 and pauses regen for 3 seconds
+  (hero.selfPunchRegenPause) — the window to get killed.
 - Thorns reflect the attacker's *raw* hit x thorns, so even weak attackers
   get flattened. Thorns damage never bounces again.
 - NPCs are drawn in layers (person + one sprite per worn item) so real art
@@ -94,4 +97,10 @@ Grumbold the Ancient Dragon survives one thorns hit, then not the second.
 ## The ending (decided with the owner)
 Open-ended: whoever first manages to actually kill the hero, wherever and
 however (an over-geared villager, the dragon, the god...), triggers the
-ending, with a joke that depends on who did it. Built in Milestone 9.
+ending, with a joke that depends on who did it. Built in Milestone 9:
+- src/systems/ending.js records the death (kept per browser, so the
+  "different killers" count grows across games) and wipes the save.
+- src/scenes/EndingScene.js: YOU DIED... FINALLY, killer + weapon + place,
+  a per-killer joke (jokes.js -> ending.byKiller), stats, Play again, and an
+  Exit button that finally admits you could have closed the tab.
+- Sounds are made in code (data/sounds.js + src/audio/sfx.js). M mutes.

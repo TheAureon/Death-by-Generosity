@@ -6,6 +6,8 @@
 //
 // The hero's thorns: whoever hits the hero takes (their raw hit x thorns)
 // straight back. Thorns damage never bounces again (no infinite ping-pong).
+// The hero's armour completely blocks any hit not stronger than their
+// defense (999) — only monstrous weapons can even scratch them.
 // ---------------------------------------------------------------------------
 (function () {
   const COLORS = { normal: "#ffffff", hero: "#ff6b6b", thorns: "#d58cff", heal: "#7dff8a" };
@@ -18,15 +20,24 @@
     if (!target || !target.alive) return { dealt: 0, reflected: 0 };
 
     const defense = (target.stats && target.stats.defense) || 0;
-    const dealt = Math.max(1, Math.round(raw - defense));
-    target.takeDamage(dealt, attacker, "hit");
-    popNumber(scene, target, "-" + fmt(dealt), target.isHero ? COLORS.hero : COLORS.normal);
+    // Everyone takes at least 1 damage... except the hero, whose cursed
+    // armour shrugs off anything weaker than its defense.
+    const dealt = Math.max(target.isHero ? 0 : 1, Math.round(raw - defense));
+    if (dealt > 0) {
+      popNumber(scene, target, "-" + fmt(dealt), target.isHero ? COLORS.hero : COLORS.normal);
+      DBG.Sfx.play("hit");
+      target.takeDamage(dealt, attacker, "hit");
+    } else {
+      popNumber(scene, target, "BLOCKED", "#d8d8e0");
+      DBG.Sfx.play("blocked");
+    }
 
     // Thorns: punish the attacker with their own hit, multiplied
     let reflected = 0;
     const thorns = (target.stats && target.stats.thorns) || 0;
     if (thorns > 0 && attacker && attacker.alive) {
       reflected = Math.round(raw * thorns);
+      DBG.Sfx.play("thorns");
       attacker.takeDamage(reflected, target, "thorns");
       popNumber(scene, attacker, "THORNS -" + fmt(reflected), COLORS.thorns, 6);
     }

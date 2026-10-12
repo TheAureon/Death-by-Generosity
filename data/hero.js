@@ -11,6 +11,7 @@ DBG.data.hero = {
   "defense": 999,          // incoming damage is reduced by this (minimum 1)
   "thorns": 10,            // attackers take this many times their own hit back
   "moveSpeed": 90,         // (overrides settings.playerSpeed)
+  "selfPunchRegenPause": 3, // seconds regen stops after punching yourself (K)
 
   // The armour that can't be taken off
   "armor": {

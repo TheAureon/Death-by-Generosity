@@ -23,6 +23,7 @@ DBG.UI.CraftMenu = class CraftMenu {
   open(npc) {
     if (this.root) return;
     this.npc = npc;
+    DBG.Sfx.play("click");
     this.openedAt = this.scene.time.now;
     this.scene.scene.pause("World");
     this.selected = this.selected || 0;
@@ -85,6 +86,7 @@ DBG.UI.CraftMenu = class CraftMenu {
     if (!inv.add(recipe.result)) return this.scene.toast.show(J.bagFull.replace("{item}", name));
     Object.entries(recipe.needs).forEach(([id, n]) => inv.remove(id, n));
     this.scene.toast.show(J.crafted.replace("{item}", name).replace("{name}", this.npc.name));
+    DBG.Sfx.play("clang");
     DBG.Save.autosave();
     this.build();
   }

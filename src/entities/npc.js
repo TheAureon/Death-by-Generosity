@@ -207,6 +207,7 @@
 
       if (cause === "hero") {
         // Pancake.
+        DBG.Sfx.play("pancake");
         this.setAngle(0).setScale(1.6, 0.18);
         this.burst("spark", [0xd9c398, 0xc9a26b], 14, 2, { angle: { min: 180, max: 360 } });
         s.cameras.main.shake(120, 0.008);
@@ -229,6 +230,7 @@
         DBG.Hazards.deathAnimation(this, cause);
       } else {
         // Just falls over.
+        DBG.Sfx.play("poof");
         s.tweens.add({ targets: this, angle: 90, duration: 250, ease: "Bounce.easeOut", onComplete: () => this.finishDeath(1000) });
       }
     }

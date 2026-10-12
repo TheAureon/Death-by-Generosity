@@ -22,6 +22,9 @@ DBG.Save = {
     DBG.state.pos = null;
     DBG.state.waystones = {}; // map id -> true once you've touched its waystone
     DBG.state.warned = {};    // road warnings already shown
+    DBG.state.playSeconds = 0;
+    DBG.state.giftsGiven = 0;
+    DBG.state.dead = false;
   },
 
   /** Everything worth keeping, as plain data. */
@@ -43,11 +46,14 @@ DBG.Save = {
       introShown: DBG.state.introShown,
       waystones: { ...DBG.state.waystones },
       warned: { ...DBG.state.warned },
+      playSeconds: Math.round(DBG.state.playSeconds || 0),
+      giftsGiven: DBG.state.giftsGiven || 0,
       world: JSON.parse(JSON.stringify(DBG.state.world)),
     };
   },
 
   save() {
+    if (DBG.state.dead) return false; // you died: this run is over
     try {
       localStorage.setItem(this.KEY, JSON.stringify(this.snapshot()));
       if (DBG.game) DBG.game.events.emit("saved");
@@ -87,6 +93,8 @@ DBG.Save = {
     DBG.state.introShown = !!data.introShown;
     DBG.state.waystones = { ...(data.waystones || {}) };
     DBG.state.warned = { ...(data.warned || {}) };
+    DBG.state.playSeconds = data.playSeconds || 0;
+    DBG.state.giftsGiven = data.giftsGiven || 0;
     DBG.state.world = { npcs: {}, pickups: {}, ...data.world };
     // Drop gear that no longer exists in data/items.js (e.g. after editing)
     Object.values(DBG.state.world.npcs).forEach((rec) => {

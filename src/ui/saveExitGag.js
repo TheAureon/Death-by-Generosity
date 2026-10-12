@@ -34,6 +34,7 @@ DBG.UI.SaveExitGag = class SaveExitGag {
     // The "Save" half genuinely works now. It's only the "Exit" half that doesn't.
     DBG.Save.save();
     const fn = this[failure.effect] || this.message;
+    DBG.Sfx.play("error");
     this.busy = true;
     fn.call(this, failure.lines, () => {
       this.busy = false;

@@ -10,6 +10,6 @@ window.addEventListener("load", () => {
     pixelArt: true, // no blurry scaling
     scale: { mode: Phaser.Scale.RESIZE, width: window.innerWidth, height: window.innerHeight },
     physics: { default: "arcade", arcade: { debug: false } },
-    scene: [DBG.Scenes.BootScene, DBG.Scenes.WorldScene, DBG.Scenes.UIScene],
+    scene: [DBG.Scenes.BootScene, DBG.Scenes.WorldScene, DBG.Scenes.UIScene, DBG.Scenes.EndingScene],
   });
 });

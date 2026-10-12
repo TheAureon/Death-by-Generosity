@@ -15,7 +15,9 @@ DBG.Gifting = {
     const rankBefore = npc.rank;
     const oldId = npc.equip(itemId);
     npc.celebrate();
+    DBG.Sfx.play("gift");
     npc.giftsReceived = (npc.giftsReceived || 0) + 1;
+    DBG.state.giftsGiven = (DBG.state.giftsGiven || 0) + 1;
 
     // Floating "+40 ATK" style numbers
     const labels = { attack: "ATK", defense: "DEF", maxHp: "HP", speed: "SPD" };
@@ -40,6 +42,7 @@ DBG.Gifting = {
       scene.time.delayedCall(3600, () => {
         if (!npc.active) return;
         npc.celebrate();
+        DBG.Sfx.play("rankup");
         if (npc.rank.promotion) npc.say(npc.rank.promotion, 3000);
       });
       scene.game.events.emit("toast", DBG.data.jokes.rankUp.replace("{old}", npc.baseName).replace("{title}", npc.rank.title));

@@ -18,6 +18,9 @@ DBG.data.settings = {
   // Seconds before someone who died comes back (as a "similar" person)
   "npcRespawnSeconds": 10,
 
+  // Sound volume, from 0 (silent) to 1 (loud). Press M in the game to mute.
+  "soundVolume": 0.5,
+
   // Which map to load when the game starts (file name in data/maps/).
   "startMap": "village"
 };

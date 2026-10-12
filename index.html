@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Death By Generosity</title>
+    <!-- Tiny pixel skull icon for the browser tab (inline, so no extra file) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 8%22 shape-rendering=%22crispEdges%22%3E%3Cpath fill=%22%23fff6d8%22 d=%22M1 1h6v4H6v2H2V5H1z%22/%3E%3Cpath fill=%22%23c8323c%22 d=%22M2 2h1v2H2zM5 2h1v2H5zM3 5h2v1H3z%22/%3E%3C/svg%3E" />
     <style>
       html, body { margin: 0; height: 100%; background: #1d1620; overflow: hidden; }
       #game { width: 100%; height: 100%; }
@@ -47,6 +49,10 @@
     <script src="data/maps/dragon.js"></script>
     <script src="data/maps/ancient.js"></script>
 
+    <!-- Generated sound effects -->
+    <script src="data/sounds.js"></script>
+    <script src="src/audio/sfx.js"></script>
+
     <!-- Generated pixel art -->
     <script src="src/art/artHelpers.js"></script>
     <script src="src/art/palette.js"></script>
@@ -65,6 +71,7 @@
     <script src="src/systems/saveGame.js"></script>
     <script src="src/systems/gifting.js"></script>
     <script src="src/systems/hazards.js"></script>
+    <script src="src/systems/ending.js"></script>
     <script src="src/ai/fightBrain.js"></script>
 
     <!-- World + characters -->
@@ -96,6 +103,7 @@
     <script src="src/scenes/BootScene.js"></script>
     <script src="src/scenes/WorldScene.js"></script>
     <script src="src/scenes/UIScene.js"></script>
+    <script src="src/scenes/EndingScene.js"></script>
     <script src="src/main.js"></script>
   </body>
 </html>
