@@ -1,7 +1,8 @@
 // ===========================================================================
 // MAP: The Lake — sea monsters (Milestone 8).
 //   Old Finn (1) fishes off the dock. Snappy Crabs (X) on the beaches,
-//   Lake Serpents (L) along the shore. > = road back to the Plains. $ = waystone.
+//   Lake Serpents (L) along the shore. > = road to the Plains,
+//   v = road south to Central City. $ = waystone.
 // ===========================================================================
 DBG.addMap("lake", {
   "name": "The Lake",
@@ -9,6 +10,8 @@ DBG.addMap("lake", {
   "legend": {
     ">": {"name": "Road to the Plains", "art": "path", "exit": "plains", "arrive": "fromLake"},
     "e": {"arrival": "fromPlains"},
+    "v": {"name": "Road to Central City", "art": "path", "exit": "city", "arrive": "fromLake"},
+    "z": {"arrival": "fromCity"},
     "X": {"spawn": "crab"},
     "L": {"spawn": "serpent"},
     "1": {"npc": "finn"}
@@ -45,9 +48,9 @@ TT......ssss~~~~~~~~~~~~~~~~~ssss...........TT
 TT......Xsssss~~~~~~~~~~~~~sssssT...........TT
 TT.........sssssssss~sssssssss.......,......TT
 TT............sssssssssssss.................TT
-TT.........,........s.........X.............TT
-TT..............T......,.T..................TT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TT.........,........s.z.......X.............TT
+TT..............T.....==.T..................TT
+TTTTTTTTTTTTTTTTTTTTTTvvTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTvvTTTTTTTTTTTTTTTTTTTTTT
 `
 });

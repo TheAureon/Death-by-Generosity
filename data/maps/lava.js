@@ -8,7 +8,7 @@ DBG.addMap("lava", {
 
   "legend": {
     "<": {"name": "Road to the Knight Fortress", "art": "basalt", "exit": "fortress", "arrive": "fromLava"},
-    "N": {"name": "Path up Dragon Mountain", "art": "basalt", "exit": "dragon", "arrive": "fromLava", "requires": 9, "gateText": "A DRAGON-SHAPED SIGN: Dragon Mountain. Gift {need} people to death first. (You: {have}.) Grumbold is very busy."},
+    "N": {"name": "Path up Dragon Mountain", "art": "basalt", "exit": "dragon", "arrive": "fromLava", "warning": "A DRAGON-SHAPED SIGN: Dragon Mountain. Home of Grumbold. Grumbold is very busy. And very big."},
     "w": {"arrival": "fromFortress"},
     "n": {"arrival": "fromDragon"},
     "S": {"spawn": "magma_slime"},

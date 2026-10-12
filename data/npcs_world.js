@@ -1,9 +1,6 @@
 // ===========================================================================
 // NPCs of the wider world (Milestone 8). Same format as data/npcs.js —
 // see the notes at the top of that file. Grouped by region.
-//
-// Extra field:
-//   "noFight": a line they say instead of ever agreeing to fight
 // ===========================================================================
 Object.assign(DBG.data.npcs, {
 
@@ -222,9 +219,12 @@ Object.assign(DBG.data.npcs, {
     "greeting": "Ah. The shiny one. I've been watching you. It's been... a lot.",
     "giftLines": ["A {item}. How quaint. I accept your offering.", "Mortals keep giving me things. I keep accepting them.", "This {item} amuses me. Continue."],
     "swapLine": "Take back this {item}. I have transcended it.",
-    "fightStart": "...",
-    "refuseFight": "...",
-    "noFight": "Not yet, little mortal. That part of the story hasn't been written. (Come back in Milestone 9.)",
-    "quirks": { "attack": 1 }
+    "fightStart": "Very well. I shall smite you. Gently. Mostly.",
+    "refuseFight": "A god does not fight empty-handed. It's a whole thing. Bring me an offering.",
+    "quirks": { "selfHit": 3, "backpedal": 3, "attack": 2 },
+    "quirkLines": {
+      "selfHit": ["Behold, DIVINE SMITING!", "I have not done this in four thousand years—", "Smite! Smi— ow."],
+      "backpedal": ["Kneel, mortal!", "Witness the might of Bartholomew!", "I created this realm!", "...I did not create this edge, though."]
+    }
   }
 });

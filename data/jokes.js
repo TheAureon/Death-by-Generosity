@@ -120,7 +120,6 @@ DBG.data.jokes = {
   "waystoneOn": "The waystone glows. {place} is now a fast-travel spot!",
   "travelTitle": "Waystone Travel",
   "travelHint": "Touch more waystones to unlock more places.",
-  "gateDefault": "The way is blocked. Gift {need} people to death first. (So far: {have})",
 
   // Crafting at the forge ({item}, {name} = the smith)
   "crafted": "{name} forged a {item}! It's still glowing. Don't touch it. Or do.",

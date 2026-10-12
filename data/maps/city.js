@@ -1,16 +1,21 @@
 // ===========================================================================
 // MAP: Central City — medieval, full of true human warriors (Milestone 8).
 //   Captain Valeria (1), Merchant Gus (2) by the fountain, Bard Fennick (3),
-//   Sir Lancelittle (4). N = road north to the Plains, > = gate to Guard Town.
+//   Sir Lancelittle (4). Gates: N to the Plains, < to the Lake,
+//   > to Guard Town, v to the Knight Fortress.
 // ===========================================================================
 DBG.addMap("city", {
   "name": "Central City",
 
   "legend": {
     "N": {"name": "North gate", "art": "path", "exit": "plains", "arrive": "fromCity"},
-    ">": {"name": "East gate", "art": "path", "exit": "guardtown", "arrive": "fromCity", "requires": 3, "gateText": "EAST GATE GUARD: Guard Town admits only proven heroes. Gift {need} people to death first. (You: {have}.) It's bureaucracy."},
+    ">": {"name": "East gate", "art": "path", "exit": "guardtown", "arrive": "fromCity", "warning": "EAST GATE GUARD: Guard Town's that way. Tougher folks. Try not to die. ...Oh, right. Try TO die."},
+    "<": {"name": "West gate", "art": "path", "exit": "lake", "arrive": "fromCity"},
+    "v": {"name": "South gate", "art": "path", "exit": "fortress", "arrive": "fromCity", "warning": "SOUTH GATE GUARD: Knight Fortress ahead. Proper knights. Heavy armour. Deep moat."},
     "n": {"arrival": "fromPlains"},
     "e": {"arrival": "fromGuardtown"},
+    "w": {"arrival": "fromLake"},
+    "z": {"arrival": "fromFortress"},
     "1": {"npc": "valeria"},
     "2": {"npc": "gus"},
     "3": {"npc": "fennick"},
@@ -36,8 +41,8 @@ DBG.addMap("city", {
 ##..............cccccc~~~~~~cccccc..............##
 ##..............cccccc~~~~~~cccccc.......D.D....##
 ##cccccccccccccccccccccccccccccccccccccccccccccc##
-##ccccccccccccccccccccccccccccccccccccccccccccec>>
-##ccccccccccccccccccccccc2cccccccccccccccccccccc>>
+<<cwccccccccccccccccccccccccccccccccccccccccccec>>
+<<ccccccccccccccccccccccc2cccccccccccccccccccccc>>
 ##cccccccccccccccccccccccccccccc4ccccccccccccccc##
 ##..............cccccccccccccccccc..............##
 ##..............ccc$cccccccccccccc..............##
@@ -52,9 +57,9 @@ DBG.addMap("city", {
 ##.....................cccc...............,.....##
 ##..............,......cccc.....,............TT.##
 ##.....................cccc................T.T..##
-##.......,.............cccc...................T.##
+##.......,.............czcc...................T.##
 ##.....................cccc.....................##
-##################################################
-##################################################
+########################vv########################
+########################vv########################
 `
 });

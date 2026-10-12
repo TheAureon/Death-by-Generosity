@@ -1,7 +1,8 @@
 // ===========================================================================
 // MAP: The Forest — generic monsters (Milestone 8).
 //   Moss the Hermit (1) lives in the clearing, near two sinkholes (o).
-//   Wolves (F), Shroomlings (G), a Grumpy Boar (Q). < = road back to the Plains.
+//   Wolves (F), Shroomlings (G), a Grumpy Boar (Q). < = road to the Plains,
+//   v = forest path south to Guard Town.
 // ===========================================================================
 DBG.addMap("forest", {
   "name": "The Forest",
@@ -9,6 +10,8 @@ DBG.addMap("forest", {
   "legend": {
     "<": {"name": "Road to the Plains", "art": "path", "exit": "plains", "arrive": "fromForest"},
     "w": {"arrival": "fromPlains"},
+    "v": {"name": "Path to Guard Town", "art": "path", "exit": "guardtown", "arrive": "fromForest", "warning": "Guard Town ahead: guards with real training. Still not enough training."},
+    "z": {"arrival": "fromGuardtown"},
     "F": {"spawn": "wolf"},
     "G": {"spawn": "shroomling"},
     "Q": {"spawn": "boar"},
@@ -39,16 +42,16 @@ TT..T..T..T.....T,M........M.....,......T..TTT
 TT.T.T.TT.....T..T.,.oo....M.G....,TT.,..T.TTT
 TTTT......T.......T.M..,..........,.....TTT.TT
 TT.T...T..T..........T..................T...TT
-TTT...T.T.T.TT.T...T..TTTT................T.TT
+TTT...T.T.T.TT.T...T....TT................T.TT
 TT..T..T...TT.T....T.T...,.TTT........F....TTT
-TT..T.T....T..T........T.TTT...............TTT
-TT.T..T...TT.T.......TT...T...T....F........TT
+TT..T.T....T..T..........TTT...............TTT
+TT.T..T...TT.T.......T....T...T....F........TT
 TT..T..T........T...T....TT.T.....Q.......TTTT
-TT..T...T....T..T,.,T..T.T.,.TT.T.......T..TTT
-TT.T.T..T....T.TT..TT..T....T.TT...T.......TTT
-TT..T..T......TT..TTT..T..T.T.T.T.T.T.T....TTT
-TT.T.TTTT......T...T..TT..T...........T....TTT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TT..T...T....T..T,.,T....T.,.TT.T.......T..TTT
+TT.T.T..T....T.TT..TT.......T.TT...T.......TTT
+TT..T..T......TT..TTT.z...T.T.T.T.T.T.T....TTT
+TT.T.TTTT......T...T......T...........T....TTT
+TTTTTTTTTTTTTTTTTTTTTTvvTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTvvTTTTTTTTTTTTTTTTTTTTTT
 `
 });

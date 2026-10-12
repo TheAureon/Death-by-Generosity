@@ -29,8 +29,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     else if (arrival) this.player = new DBG.Entities.Player(this, arrival.x, arrival.y);
     else this.player = new DBG.Entities.Player(this, start.x * S + S / 2, start.y * S + S - 2);
     this.leaving = false;
-    this.safePos = { x: this.player.x, y: this.player.y }; // last spot not on an exit
-    this.gateMsgAt = 0;
+
     this.physics.add.collider(this.player, [this.world.walls, this.world.hazards]);
 
     // Creatures placed on the map (data/creatures.js)
@@ -191,7 +190,6 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
 
   onFightRequest(npc) {
     if (!npc.alive || npc.mode !== "calm") return;
-    if (npc.def.noFight) return npc.say(npc.def.noFight, 4000);
     if (Object.keys(npc.gear).length === 0) {
       npc.say(npc.def.refuseFight, 3000);
       return;
@@ -273,19 +271,14 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     if (this.leaving) return;
     const S = DBG.data.settings.tileSize;
     const t = this.map.tile(Math.floor(this.player.x / S), Math.floor((this.player.y - 2) / S));
-    if (!t || !t.exit) { this.safePos = { x: this.player.x, y: this.player.y }; return; }
+    if (!t || !t.exit) return;
     if (!DBG.data.maps[t.exit]) return console.warn(`Exit leads to unknown map "${t.exit}"`);
-    // Gates: some roads only open once you've gifted enough people to death
-    const need = t.requires || 0;
-    if (DBG.state.tally.gifted < need && !DBG.data.settings.openAllGates) {
-      this.player.setPosition(this.safePos.x, this.safePos.y);
-      this.player.setVelocity(0, 0);
-      if (this.time.now > this.gateMsgAt) {
-        this.gateMsgAt = this.time.now + 3000;
-        const text = (t.gateText || DBG.data.jokes.gateDefault).replace("{need}", need).replace("{have}", DBG.state.tally.gifted);
-        this.game.events.emit("toast", text);
-      }
-      return;
+    // Every road is open. Roads into tougher places just come with a warning
+    // (shown the first time you take them).
+    const warnKey = this.map.id + ">" + t.exit;
+    if (t.warning && !DBG.state.warned[warnKey]) {
+      DBG.state.warned[warnKey] = true;
+      this.game.events.emit("toast", t.warning);
     }
     this.leaving = true;
     this.player.setVelocity(0, 0);

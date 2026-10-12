@@ -8,7 +8,7 @@ DBG.addMap("dragon", {
 
   "legend": {
     "v": {"name": "Path down to the Lava Fields", "art": "rockfloor", "exit": "lava", "arrive": "fromDragon"},
-    "N": {"name": "Door to the Ancient Realm", "art": "rockfloor", "exit": "ancient", "arrive": "fromDragon", "requires": 12, "gateText": "A GLOWING DOOR: The Ancient Realm opens only for those who have gifted {need} people to death. (You: {have}.)"},
+    "N": {"name": "Door to the Ancient Realm", "art": "rockfloor", "exit": "ancient", "arrive": "fromDragon", "warning": "A GLOWING DOOR: The Ancient Realm. Gods live here. Real ones. Mind the Void."},
     "z": {"arrival": "fromLava"},
     "n": {"arrival": "fromAncient"},
     "L": {"spawn": "drake"},

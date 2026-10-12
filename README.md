@@ -49,14 +49,12 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/creatures.js` | Monsters: stats, loot drops, how they move, respawn time |
 | `data/recipes.js` | What Brunhilde can forge from monster bits |
 
-**Maps:** the game starts in the village (`data/maps/village.js`). From the
-Plains, roads lead to the Lake, the Forest and Central City, and on to Guard
-Town, the Knight Fortress, the Lava Fields, Dragon Mountain and the Ancient
-Realm (`data/regions.js` lists them in order). Exits are tiles with `"exit"`
-(which map) and `"arrive"` (which arrival spot) in a map's legend; an exit can
-also have `"requires"` (how many people you must have gifted to death before
-it opens) and `"gateText"`. To open every gate for testing, set
-`"openAllGates": true` in `data/settings.js`.
+**Maps:** the game starts in the village (`data/maps/village.js`). The world
+is open: every road works from the start, and areas link up in several
+directions (Plains, Lake, Forest, Central City, Guard Town, Knight Fortress,
+Lava Fields, Dragon Mountain, the Ancient Realm). Exits are tiles with
+`"exit"` (which map) and `"arrive"` (which arrival spot) in a map's legend; an
+exit can also have a `"warning"`, shown the first time you take that road.
 
 **Fast travel:** press **E** at a waystone (the glowing carved stones) to
 unlock it and travel between any waystones you've touched.

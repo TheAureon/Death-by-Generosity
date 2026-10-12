@@ -18,10 +18,6 @@ DBG.data.settings = {
   // Seconds before someone who died comes back (as a "similar" person)
   "npcRespawnSeconds": 10,
 
-  // true = every region gate is open (handy for testing). Normally gates
-  // ask how many people you've gifted to death before letting you through.
-  "openAllGates": false,
-
   // Which map to load when the game starts (file name in data/maps/).
   "startMap": "village"
 };

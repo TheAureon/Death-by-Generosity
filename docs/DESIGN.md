@@ -71,16 +71,16 @@ Brunhilde, Reginald and the Mayor start with gear, so they'll fight right away.
 - Save slot in localStorage; autosave on map change / gift / death / craft;
   Journal (J) has save, load, new game. Save & Exit saves, then fails to exit.
 
-## The world map
-- Little Givington (start) -> south -> The Plains
-- The Plains -> west -> The Lake;  east -> The Forest;  south -> Central City (gate 1)
-- Central City -> east -> Guard Town (gate 3)
-- Guard Town -> south -> Knight Fortress (gate 5)
-- Knight Fortress -> east -> Lava Fields (gate 7)
-- Lava Fields -> north -> Dragon Mountain (gate 9)
-- Dragon Mountain -> north -> The Ancient Realm (gate 12)
+## The world map (open world: every road works from the start)
+- Little Givington (start) <-> The Plains
+- The Plains <-> The Lake, The Forest, Central City
+- The Lake <-> Central City;  The Forest <-> Guard Town
+- Central City <-> Guard Town, Knight Fortress
+- Guard Town <-> Knight Fortress
+- Knight Fortress <-> Lava Fields <-> Dragon Mountain <-> The Ancient Realm
 
-Gates count "gifted to death". Each region has a waystone (fast travel),
+There is no story and no required order. Tougher areas just show a warning
+the first time you head there. Each region has a waystone (fast travel),
 new monsters and loot, and villagers with signature failures:
 Old Finn (wades in to check his nets), Moss (flees his own glow), Captain
 Valeria (a true warrior: high HP, survives a few thorn hits), Merchant Gus
@@ -88,5 +88,10 @@ Valeria (a true warrior: high HP, survives a few thorn hits), Merchant Gus
 Sergeant Brick, Guards Pete & Repeat, Dame Ironsides (charges off the
 drawbridge into the moat), Sir Clankston (rinses his armour in the moat),
 Ignatius (juggles lava), Derek the Dragon Fan (runs off cliffs), and
-Bartholomew, an Old God (won't fight yet: that's the ending, Milestone 9).
+Bartholomew, an Old God (smites himself, gives speeches near the Void).
 Grumbold the Ancient Dragon survives one thorns hit, then not the second.
+
+## The ending (decided with the owner)
+Open-ended: whoever first manages to actually kill the hero, wherever and
+however (an over-geared villager, the dragon, the god...), triggers the
+ending, with a joke that depends on who did it. Built in Milestone 9.
