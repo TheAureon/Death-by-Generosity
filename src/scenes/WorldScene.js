@@ -6,8 +6,13 @@
 // (give a gift / please fight me) and tells us what was picked.
 // Deaths: NPCs announce "npc-died"; we count it, drop their gear, and bring
 // a "suspiciously similar" replacement back later.
-// Monsters drop loot and respawn. Exit tiles lead to other maps; the scene
-// restarts with { mapId, arrival } and the hero appears at that arrival spot.
+// Monsters drop loot and respawn.
+//
+// The normal map is "world": every area stitched into one open world
+// (data/world.js). Walking into a new area shows its name (and a warning
+// the first time, for tough places). Waystones teleport you around.
+// Single maps (like test_meadow) still work, and their exit tiles still
+// restart the scene with { mapId, arrival }.
 // ---------------------------------------------------------------------------
 DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
   constructor() {
@@ -61,9 +66,12 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     // Chickens placed on the map live with the other chickens (they move)
     this.chickens = this.creatures.filter((c) => c instanceof DBG.Entities.Chicken);
     this.creatures = this.creatures.filter((c) => !(c instanceof DBG.Entities.Chicken));
-    // Waystones you've already touched glow
+    // Waystones you've already touched glow (one per area)
     this.waystones = this.world.objects.filter((o) => o.texture.key === "waystone");
-    if (DBG.state.waystones[this.map.id]) this.waystones.forEach((w) => w.setTexture("waystone_lit"));
+    this.waystones.forEach((w) => {
+      w.regionId = this.regionAtPixel(w.x, w.y - 2).id;
+      if (DBG.state.waystones[w.regionId]) w.setTexture("waystone_lit");
+    });
 
     // Items left lying on this map last time (world memory)
     this.pickups = DBG.Memory.takePickups(this.map.id).map((p) => {
@@ -112,7 +120,8 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     this.events.once("shutdown", () => this.scale.off("resize", this.applyZoom, this));
 
     // Tell the UI which area we're in, and explain the game the first time
-    this.game.events.emit("area-entered", this.map.name);
+    this.region = null;
+    this.updateRegion();
     if (DBG.state.continued) {
       DBG.state.continued = false;
       this.time.delayedCall(1500, () => this.game.events.emit("toast", DBG.data.jokes.welcomeBack));
@@ -167,23 +176,57 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
 
   /** Touch a waystone: it remembers this place, then offers fast travel. */
   useWaystone() {
-    if (!DBG.state.waystones[this.map.id]) {
-      DBG.state.waystones[this.map.id] = true;
-      this.waystones.forEach((w) => w.setTexture("waystone_lit"));
+    const here = this.regionAtPixel(this.player.x, this.player.y);
+    if (!DBG.state.waystones[here.id]) {
+      DBG.state.waystones[here.id] = true;
+      this.waystones.filter((w) => w.regionId === here.id).forEach((w) => w.setTexture("waystone_lit"));
       this.cameras.main.flash(250, 124, 240, 255);
       DBG.Sfx.play("chime");
-      this.game.events.emit("toast", DBG.data.jokes.waystoneOn.replace("{place}", this.map.name));
+      this.game.events.emit("toast", DBG.data.jokes.waystoneOn.replace("{place}", here.name));
       DBG.Save.autosave();
     }
-    this.game.events.emit("open-travel", this.map.id);
+    this.game.events.emit("open-travel", here.id);
   }
 
-  /** Go somewhere by waystone (called by the travel menu). */
-  travelTo(mapId) {
-    if (this.leaving || mapId === this.map.id) return;
+  /** Go to another area's waystone (called by the travel menu). */
+  travelTo(regionId) {
+    if (this.leaving || regionId === this.regionAtPixel(this.player.x, this.player.y).id) return;
+    const spot = this.world.spawns.find((sp) => sp.arrival === "waystone" && this.regionAtPixel(sp.x, sp.y - 2).id === regionId);
     this.leaving = true;
-    this.cameras.main.fadeOut(400, 124, 240, 255);
-    this.cameras.main.once("camerafadeoutcomplete", () => this.scene.restart({ mapId, arrival: "waystone" }));
+    const cam = this.cameras.main;
+    cam.fadeOut(400, 124, 240, 255);
+    cam.once("camerafadeoutcomplete", () => {
+      // A different single map: load it. Same open world: just move there.
+      if (!spot) return this.scene.restart({ mapId: regionId, arrival: "waystone" });
+      this.player.setPosition(spot.x, spot.y).setVelocity(0, 0);
+      cam.centerOn(spot.x, spot.y);
+      this.leaving = false;
+      this.updateRegion();
+      cam.fadeIn(400, 124, 240, 255);
+      DBG.Save.autosave();
+    });
+  }
+
+  // ---- Areas of the open world ---------------------------------------------
+
+  /** Which area a pixel position is in: { id, name }. */
+  regionAtPixel(x, y) {
+    const S = DBG.data.settings.tileSize;
+    return this.map.regionAt(Math.floor(x / S), Math.floor(y / S));
+  }
+
+  /** Walked into a different area? Show its name (and a warning, once). */
+  updateRegion() {
+    const r = this.regionAtPixel(this.player.x, this.player.y - 2);
+    if (this.region && r.id === this.region.id) return;
+    this.region = r;
+    DBG.state.region = r.id;
+    this.game.events.emit("area-entered", r.name);
+    const info = DBG.data.regions.find((reg) => reg.id === r.id || reg.map === r.id);
+    if (info && info.warning && !DBG.state.warned[r.id]) {
+      DBG.state.warned[r.id] = true;
+      this.time.delayedCall(900, () => this.game.events.emit("toast", info.warning));
+    }
   }
 
   onGiftChosen(npc, inventoryIndex) {
@@ -293,7 +336,7 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
       killerId: killer ? (killer.id || killer.kind || "unknown") : "unknown",
       killerName: killer ? killer.name : null,
       weapon: weaponId ? DBG.data.items[weaponId].name : null,
-      place: this.map.name,
+      place: this.regionAtPixel(p.x, p.y).name,
     };
     DBG.Ending.record(info);
     this.time.delayedCall(2600, () => {
@@ -345,10 +388,21 @@ DBG.Scenes.WorldScene = class WorldScene extends Phaser.Scene {
     DBG.state.playSeconds = (DBG.state.playSeconds || 0) + dt;
     this.player.update(dt);
     this.checkExit();
-    this.monsters.slice().forEach((m) => m.update(dt, this.player));
+    this.updateRegion();
+    this.world.cull(this.cameras.main);
+
+    // Things far away take a nap (the world is big; no need to run it all)
+    const far = (o) => Math.abs(o.x - this.player.x) > 520 || Math.abs(o.y - this.player.y) > 400;
+    this.monsters.slice().forEach((m) => {
+      if (m.alive && far(m) && !m.noticed) return m.setVelocity(0, 0);
+      m.update(dt, this.player);
+    });
     this.creatures.forEach((c) => c.update(dt, this.player));
     const target = this.nearestNPC();
-    this.npcs.slice().forEach((n) => n.update(dt, this.player, n === target)); // in reach = stand still
+    this.npcs.slice().forEach((n) => {
+      if (n.alive && n.mode === "calm" && far(n)) return n.setVelocity(0, 0);
+      n.update(dt, this.player, n === target); // in reach = stand still
+    });
 
     // Chickens (remove the ones that left)
     for (let i = this.chickens.length - 1; i >= 0; i--) {

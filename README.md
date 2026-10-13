@@ -16,6 +16,7 @@ Controls:
 - **F**: attack directly (flattens people instantly; counts as a wasted attempt)
 - **I**: look in your bag
 - **J**: the Journal — the menu that actually works (save, load, new game)
+- **N**: world map
 - **C**: character sheet
 - **K**: punch yourself (drops you to 1 HP and stops healing for 3 seconds)
 - **M**: sound on/off
@@ -66,8 +67,9 @@ All content lives in the `data/` folder. Open these files in any text editor
 |---|---|
 | `data/settings.js` | Walking speed, zoom, which map loads first |
 | `data/tiles.js` | What each map character means (`#` wall, `~` water, `^` lava...) |
-| `data/maps/*.js` | The handmade maps, drawn as grids of characters |
-| `data/regions.js` | The planned world regions |
+| `data/maps/*.js` | The handmade areas, drawn as grids of characters (64 x 48 each) |
+| `data/world.js` | How the areas fit together into one open world |
+| `data/regions.js` | Every area, in fast-travel order, with the warning shown the first time you walk in |
 | `data/hero.js` | The hero's name, HP, regen, defense, thorns, armour, silly stats |
 | `data/creatures.js` | Creatures like the training dummy (HP, punch strength...) |
 | `data/jokes.js` | All the funny text: Esc messages, Save & Exit failures, ending jokes per killer |
@@ -78,17 +80,20 @@ All content lives in the `data/` folder. Open these files in any text editor
 | `data/creatures.js` | Monsters: stats, loot drops, how they move, respawn time |
 | `data/recipes.js` | What Brunhilde can forge from monster bits |
 
-**Maps:** the game starts in the village (`data/maps/village.js`). The world
-is open: every road works from the start, and areas link up in several
-directions (Plains, Lake, Forest, Central City, Guard Town, Knight Fortress,
-Lava Fields, Dragon Mountain, the Ancient Realm). Exits are tiles with
-`"exit"` (which map) and `"arrive"` (which arrival spot) in a map's legend; an
-exit can also have a `"warning"`, shown the first time you take that road.
+**The world:** it's one big open world. Every area (Little Givington, the
+Plains, the Lake, the Forest, Central City, Guard Town, the Knight Fortress,
+the Lava Fields, Dragon Mountain, the Ancient Realm, plus some wild land in
+between) is a 64 x 48 grid in `data/maps/`, and `data/world.js` lays them
+out side by side like tiles on a board. There are no gates and no loading:
+walk off the edge of one area and you're in the next. Roads (`=`) link the
+areas up, but you can walk anywhere that isn't a wall, water, lava or the
+Void. Tougher areas just show a warning the first time you walk in.
 
 **Fast travel:** press **E** at a waystone (the glowing carved stones) to
-unlock it and travel between any waystones you've touched.
-To play the old test map, change `"startMap"` in `data/settings.js` to
-`"test_meadow"`.
+light it and jump between any waystones you've lit. Press **N** for the
+world map.
+To play the old test map on its own, change `"startMap"` in
+`data/settings.js` to `"test_meadow"`.
 
 **Placing NPCs on a map:** in the map file, add a `"legend"` entry like
 `"1": { "npc": "bob" }`, then put a `1` in the grid where they should stand.
@@ -98,8 +103,9 @@ double-clicked page read separate data files. Inside, they're written in the
 same simple format as JSON. Only change the parts between the quotes and
 backticks.
 
-**Adding a new map file:** also add one line for it in `index.html`, next to
-the `test_meadow.js` line.
+**Adding a new area:** make a new 64 x 48 map file in `data/maps/`, add one
+line for it in `index.html` (next to the other map lines), and put its name
+into the `"layout"` in `data/world.js`.
 
 ## For developers
 
@@ -117,7 +123,8 @@ the `test_meadow.js` line.
 data/            editable content (settings, tile legend, maps, regions)
 src/core/        global namespace
 src/art/         ALL generated pixel art (swap in real art here)
-src/world/       map parsing (mapLoader) and building (worldBuilder)
+src/world/       map parsing + stitching the open world (mapLoader),
+                 drawing it in chunks (worldBuilder)
 src/systems/     game rules (combat + thorns, inventory, gifting, hazards,
                  world memory, saving)
 src/audio/       sound effects, synthesized in the browser (no sound files)
@@ -125,7 +132,8 @@ src/ai/          fightBrain: how NPCs fight (badly)
 src/entities/    player, training dummy, NPCs (drawn in gear layers),
                  monsters, chickens, dropped items
 src/ui/          HUD pieces: health bar, tally, messages, speech bubbles, travel,
-                 talk menu, bag/gift menu, forge (crafting) menu, journal, character sheet,
+                 talk menu, bag/gift menu, forge (crafting) menu, journal, world map,
+                 character sheet,
                  Esc + Save & Exit gags
 src/scenes/      Boot (makes art) -> World (map + player) + UI (text on top),
                  Ending (you finally died)

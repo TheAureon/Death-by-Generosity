@@ -37,7 +37,7 @@ DBG.Save = {
     }
     const inv = DBG.state.inventory;
     return {
-      version: 1,
+      version: 2,
       savedAt: new Date().toISOString(),
       mapId: DBG.state.mapId,
       pos: DBG.state.pos,
@@ -96,13 +96,44 @@ DBG.Save = {
     DBG.state.playSeconds = data.playSeconds || 0;
     DBG.state.giftsGiven = data.giftsGiven || 0;
     DBG.state.world = { npcs: {}, pickups: {}, ...data.world };
+    if ((data.version || 1) < 2) this.upgradeToOpenWorld(data);
     // Drop gear that no longer exists in data/items.js (e.g. after editing)
     Object.values(DBG.state.world.npcs).forEach((rec) => {
       rec.gear = (rec.gear || []).filter((id) => DBG.data.items[id]);
       rec.hoard = (rec.hoard || []).filter((id) => DBG.data.items[id]);
     });
-    DBG.state.mapId = DBG.data.maps[data.mapId] ? data.mapId : DBG.data.settings.startMap;
+    const known = data.mapId === "world" || DBG.data.maps[data.mapId];
+    DBG.state.mapId = known ? data.mapId : DBG.data.settings.startMap;
     DBG.state.pos = DBG.state.mapId === data.mapId ? data.pos : null;
+  },
+
+  /**
+   * Saves from before the open world were per-area. Move the hero and any
+   * items lying around to the same spots in the big stitched world.
+   */
+  upgradeToOpenWorld(data) {
+    const W = DBG.data.world, S = DBG.data.settings.tileSize;
+    // How far each old area got shifted inside its 64x48 piece (in tiles)
+    const PAD = { village: [2, 3], plains: [6, 6], lake: [9, 7], forest: [9, 7], city: [7, 5],
+      guardtown: [9, 7], fortress: [9, 6], lava: [9, 7], dragon: [10, 3], ancient: [12, 5] };
+    const shift = (id) => {
+      const cy = W.layout.findIndex((row) => row.includes(id));
+      if (cy < 0 || !PAD[id]) return null;
+      const cx = W.layout[cy].indexOf(id);
+      return { x: (cx * W.cellWidth + PAD[id][0]) * S, y: (cy * W.cellHeight + PAD[id][1]) * S };
+    };
+    const pickups = DBG.state.world.pickups;
+    const moved = pickups.world || [];
+    Object.keys(pickups).forEach((id) => {
+      const d = shift(id);
+      if (!d) return;
+      pickups[id].forEach((p) => moved.push({ ...p, x: p.x + d.x, y: p.y + d.y }));
+      delete pickups[id];
+    });
+    pickups.world = moved;
+    const d = shift(data.mapId);
+    data.pos = d && data.pos ? { x: data.pos.x + d.x, y: data.pos.y + d.y } : null;
+    data.mapId = "world";
   },
 
   /** Save a moment from now (several events in a row = one save). */

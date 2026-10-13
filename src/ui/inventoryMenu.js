@@ -24,7 +24,7 @@ DBG.UI.InventoryMenu = class InventoryMenu {
     ["Q", "BACKSPACE"].forEach((key) => k.on("keydown-" + key, when(() => this.close())));
     k.on("keydown-I", () => {
       if (this.root) { if (this.mode === "view") this.close(); }
-      else if (!(scene.choiceMenu && scene.choiceMenu.isOpen) && !(scene.craftMenu && scene.craftMenu.isOpen)) this.open("view");
+      else if (!(scene.choiceMenu && scene.choiceMenu.isOpen) && !(scene.craftMenu && scene.craftMenu.isOpen) && !(scene.worldMap && scene.worldMap.isOpen)) this.open("view");
     });
 
     const onOpenGift = (npc) => this.open("gift", npc);

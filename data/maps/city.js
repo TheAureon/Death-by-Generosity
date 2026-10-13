@@ -4,14 +4,13 @@
 //   Sir Lancelittle (4). Gates: N to the Plains, < to the Lake,
 //   > to Guard Town, v to the Knight Fortress.
 // ===========================================================================
+// OPEN WORLD: this area is one 64x48 piece of the big seamless world.
+// Where it sits is set in data/world.js. Its edges are open: walk off any
+// side and you're in the next area. Roads (=) link up with the neighbours.
 DBG.addMap("city", {
   "name": "Central City",
 
   "legend": {
-    "N": {"name": "North gate", "art": "path", "exit": "plains", "arrive": "fromCity"},
-    ">": {"name": "East gate", "art": "path", "exit": "guardtown", "arrive": "fromCity", "warning": "EAST GATE GUARD: Guard Town's that way. Tougher folks. Try not to die. ...Oh, right. Try TO die."},
-    "<": {"name": "West gate", "art": "path", "exit": "lake", "arrive": "fromCity"},
-    "v": {"name": "South gate", "art": "path", "exit": "fortress", "arrive": "fromCity", "warning": "SOUTH GATE GUARD: Knight Fortress ahead. Proper knights. Heavy armour. Deep moat."},
     "n": {"arrival": "fromPlains"},
     "e": {"arrival": "fromGuardtown"},
     "w": {"arrival": "fromLake"},
@@ -23,43 +22,53 @@ DBG.addMap("city", {
   },
 
   "grid": `
-########################NN########################
-########################NN########################
-##.....................cccc.....................##
-##.....................cncc.....................##
-##..RRRRRRR..KKKKKK....cccc....KKKKKK..RRRRRRR.,##
-##..RRRRRRR..KKKKKK....cccc....KKKKKK..RRRRRRR..##
-##..RRRRRRR..KKKKKK....cccc....KKKKKK..RRRRRRR..##
-##..HWH+WHH..HWH+WH....cccc....HWH+WH..HWH+WHH..##
-##....,................cccc.....................##
-##....TT....T..........cccc.....................##
-##..T....T.............cccc.....................##
-##.....................cccc...........KKKKKKKK..##
-##..............cccccccccccccccccc....KKKKKKKK..##
-##.......T......ccccccccc1cccccccc....KKKKKKKK..##
-##......O..T..,.cc3ccccccccccccccc....###+####..##
-##..............cccccc~~~~~~cccccc..............##
-##..............cccccc~~~~~~cccccc.......D.D....##
-##cccccccccccccccccccccccccccccccccccccccccccccc##
-<<cwccccccccccccccccccccccccccccccccccccccccccec>>
-<<ccccccccccccccccccccccc2cccccccccccccccccccccc>>
-##cccccccccccccccccccccccccccccc4ccccccccccccccc##
-##..............cccccccccccccccccc..............##
-##..............ccc$cccccccccccccc..............##
-##..............cccccccccccccccccc.............,##
-##..,...........cccccccccccccccccc..............##
-##..KKKKKKK.....cccccccccccccccccc.....KKKKKKK..##
-##..KKKKKKK............cccc............KKKKKKK..##
-##..KKKKKKK..RRRRRR....cccc....RRRRRR..KKKKKKK..##
-##..HWH+WHH..RRRRRR....cccc....RRRRRR..HWH+WHH..##
-##..,........RRRRRR....cccc....RRRRRR...........##
-##...........HWH+WH....cccc....HWH+WH..T........##
-##.....................cccc...............,.....##
-##..............,......cccc.....,............TT.##
-##.....................cccc................T.T..##
-##.......,.............czcc...................T.##
-##.....................cccc.....................##
-########################vv########################
-########################vv########################
+.........T.......T.............==...r.......,..............B....
+...........T.....,....T....,...==.......r..T....r....,..r......B
+......T............T...........==.......,........,.......,T,....
+............................,..==...................,......,.T..
+,...T..........................==...............,..........,....
+...,...########################==########################......T
+...T.,.########################==########################.......
+.,.....##.....................cccc.....................##..r..T.
+.,.....##.....................cncc.....................##.......
+.B.....##..RRRRRRR..KKKKKK....cccc....KKKKKK..RRRRRRR.,##.....B.
+.....,.##..RRRRRRR..KKKKKK....cccc....KKKKKK..RRRRRRR..##.......
+.....r.##..RRRRRRR..KKKKKK....cccc....KKKKKK..RRRRRRR..##.......
+......,##..HWH+WHH..HWH+WH....cccc....HWH+WH..HWH+WHH..##..,T...
+.......##....,................cccc.....................##.,..,..
+.......##....TT....T..........cccc.....................##......T
+.......##..T....T.............cccc.....................##.......
+...,...##.....................cccc...........KKKKKKKK..##.......
+.......##..............cccccccccccccccccc....KKKKKKKK..##...T.T.
+.,T....##.......T......ccccccccc1cccccccc....KKKKKKKK..##.......
+.......##......O..T..,.cc3ccccccccccccccc....###+####..##.......
+...T...##..............cccccc~~~~~~cccccc..............##.......
+.......##..............cccccc~~~~~~cccccc.......D.D....##.....,.
+.......##cccccccccccccccccccccccccccccccccccccccccccccc##.......
+=========cwccccccccccccccccccccccccccccccccccccccccccec=========
+=========ccccccccccccccccccccccc2cccccccccccccccccccccc=========
+.......##cccccccccccccccccccccccccccccc4ccccccccccccccc##.......
+T......##..............cccccccccccccccccc..............##.....,.
+,..,...##..............ccc$cccccccccccccc..............##.......
+....,..##..............cccccccccccccccccc.............,##....r..
+.......##..,...........cccccccccccccccccc..............##.......
+.......##..KKKKKKK.....cccccccccccccccccc.....KKKKKKK..##.......
+...,..,##..KKKKKKK............cccc............KKKKKKK..##.......
+...,...##..KKKKKKK..RRRRRR....cccc....RRRRRR..KKKKKKK..##.T.....
+B.T.,..##..HWH+WHH..RRRRRR....cccc....RRRRRR..HWH+WHH..##.......
+.......##..,........RRRRRR....cccc....RRRRRR...........##.......
+.......##...........HWH+WH....cccc....HWH+WH..T........##...B...
+...,...##.....................cccc...............,.....##.......
+..,....##..............,......cccc.....,............TT.##.......
+....B..##.....................cccc................T.T..##.......
+.,...,.##.......,.............czcc...................T.##......B
+.......##.....................cccc.....................##.,,....
+...T...########################==########################.......
+.......########################==########################..T.T..
+.,..........................,..==.........,....................T
+r...............T,.....,.......==..................T...T.....T..
+...T....................T.,....==......,..................,..,..
+..................,............==.........T.T....T...,..........
+...............T..........T....==.....T..............r...,.,.T..
 `
 });

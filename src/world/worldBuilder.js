@@ -9,6 +9,9 @@
 //                 so fighting NPCs can fall into hazards)
 //   Also lists spawn points for creatures ("spawn"), NPCs ("npc") and
 //   arrival spots where the hero appears when coming from another map.
+//
+// The open world is big, so the drawing is split into chunks (one per area).
+// Chunks far off-screen are hidden each frame (world.cull) to keep it fast.
 // ---------------------------------------------------------------------------
 (function () {
   // Draw order (lower = further back). Characters/objects use their y position.
@@ -18,8 +21,22 @@
     const S = DBG.data.settings.tileSize;
     const pxW = map.width * S, pxH = map.height * S;
 
-    const groundRT = scene.add.renderTexture(0, 0, pxW, pxH).setOrigin(0).setDepth(DEPTH.ground);
-    const edgeRT = scene.add.renderTexture(0, 0, pxW, pxH).setOrigin(0).setDepth(DEPTH.edges);
+    // Chunks: each has its own ground + edge images and a list of sprites
+    const CW = map.cellWidth || map.width, CH = map.cellHeight || map.height;
+    const chunks = [];
+    for (let cy = 0; cy * CH < map.height; cy++) {
+      for (let cx = 0; cx * CW < map.width; cx++) {
+        const w = Math.min(CW, map.width - cx * CW) * S, h = Math.min(CH, map.height - cy * CH) * S;
+        chunks.push({
+          x: cx * CW * S, y: cy * CH * S, w, h, members: [], shown: true,
+          ground: scene.add.renderTexture(cx * CW * S, cy * CH * S, w, h).setOrigin(0).setDepth(DEPTH.ground),
+          edges: null, // made when first needed
+          groundList: [], edgeList: [], // what to draw, drawn in one batch at the end
+        });
+      }
+    }
+    const perRow = Math.ceil(map.width / CW);
+    const chunkAt = (x, y) => chunks[Math.floor(y / CH) * perRow + Math.floor(x / CW)];
     const walls = scene.physics.add.staticGroup();   // block everyone
     const hazards = scene.physics.add.staticGroup(); // block the hero + calm NPCs
     const objects = [];
@@ -47,12 +64,14 @@
         const tile = map.tile(x, y);
         const art = groundArt(x, y);
         const same = (dx, dy) => groundArt(x + dx, y + dy) === art;
+        const chunk = chunkAt(x, y);
+        const lx = x * S - chunk.x, ly = y * S - chunk.y; // position inside the chunk
 
         // 1 + 2: ground (static or animated)
         if (DBG.Art.animatedTiles[art]) {
-          scene.add.sprite(x * S, y * S, art).setOrigin(0).setDepth(DEPTH.animated).play(art + "-anim");
+          chunk.members.push(scene.add.sprite(x * S, y * S, art).setOrigin(0).setDepth(DEPTH.animated).play(art + "-anim"));
         } else {
-          groundRT.draw(DBG.Art.textureFor(art, x, y, same), x * S, y * S);
+          chunk.groundList.push([DBG.Art.textureFor(art, x, y, same), lx, ly]);
         }
 
         // 3: edges where this tile meets a different kind of ground
@@ -60,7 +79,7 @@
           const sides = { n: [0, -1], s: [0, 1], w: [-1, 0], e: [1, 0] };
           Object.entries(sides).forEach(([side, [dx, dy]]) => {
             const n = groundArt(x + dx, y + dy);
-            if (n !== null && n !== art) edgeRT.draw(`${art}_edge_${side}`, x * S, y * S);
+            if (n !== null && n !== art) chunk.edgeList.push([`${art}_edge_${side}`, lx, ly]);
           });
         }
 
@@ -79,6 +98,7 @@
           const obj = scene.add.image(x * S + S / 2, (y + 1) * S, key).setOrigin(0.5, 1);
           obj.setDepth(obj.y);
           objects.push(obj);
+          chunk.members.push(obj);
         }
       }
 
@@ -103,6 +123,36 @@
       }
     }
 
-    return { map, pixelWidth: pxW, pixelHeight: pxH, walls, hazards, objects, spawns };
+    // Draw each chunk's ground and edges in one batch (much faster than
+    // drawing tile by tile)
+    const bake = (rt, list) => {
+      rt.beginDraw();
+      list.forEach(([key, x, y]) => rt.batchDrawFrame(key, undefined, x, y));
+      rt.endDraw();
+    };
+    chunks.forEach((c) => {
+      bake(c.ground, c.groundList);
+      if (c.edgeList.length) {
+        c.edges = scene.add.renderTexture(c.x, c.y, c.w, c.h).setOrigin(0).setDepth(DEPTH.edges);
+        bake(c.edges, c.edgeList);
+      }
+      c.groundList = c.edgeList = null;
+    });
+
+    /** Hide chunks well outside the camera view (call every frame). */
+    const cull = (cam) => {
+      if (chunks.length === 1) return;
+      const v = cam.worldView, m = 8 * S;
+      chunks.forEach((c) => {
+        const show = c.x < v.right + m && c.x + c.w > v.x - m && c.y < v.bottom + m && c.y + c.h > v.y - m;
+        if (show === c.shown) return;
+        c.shown = show;
+        c.ground.setVisible(show);
+        if (c.edges) c.edges.setVisible(show);
+        c.members.forEach((o) => { o.setVisible(show); o.setActive(show); });
+      });
+    };
+
+    return { map, pixelWidth: pxW, pixelHeight: pxH, walls, hazards, objects, spawns, chunks, cull };
   };
 })();

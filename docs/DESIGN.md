@@ -26,6 +26,7 @@ characters and objects, and y-sorting so characters walk behind trees.
 7. World memory and saving (done)
 8. Regions, fast travel, open roads (done)
 9. Ending, sound, polish, uploadable build (done)
+10. Fully open world: one seamless map, world map (done)
 
 ## Notes
 - Armour: any hit that isn't bigger than the hero's 999 defense does 0
@@ -104,3 +105,16 @@ ending, with a joke that depends on who did it. Built in Milestone 9:
   a per-killer joke (jokes.js -> ending.byKiller), stats, Play again, and an
   Exit button that finally admits you could have closed the tab.
 - Sounds are made in code (data/sounds.js + src/audio/sfx.js). M mutes.
+
+## Open world (after Milestone 9, at the owner's request)
+- Every area is a 64x48 map; data/world.js lays them out in a 4x4 grid.
+  mapLoader stitches them into one map ("world"); each area keeps its own
+  legend. No exits or loading: borders are open countryside, roads meet at
+  the middle of each shared edge.
+- Wild filler areas (Windy Hills, Old Woods, Reedy Marsh, Quiet Meadow,
+  King's Road, the Edge of Everything) fill the gaps in the grid.
+- Walking into an area shows its name; regions.js "warning" shows once.
+- Waystones teleport inside the world (no reload). N opens the world map.
+- worldBuilder draws one chunk per area in batches and hides off-screen
+  chunks; far-away calm NPCs and monsters pause until you come near.
+- Old per-area saves are converted to world positions on load.

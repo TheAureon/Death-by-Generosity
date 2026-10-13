@@ -7,11 +7,14 @@
 //   West       : Grandma Gertrude's house and flower garden
 //   South-west : Kevin's house, the cliff % and the old mine shaft o
 //   East       : the pond and the dock _ where Sir Reginald keeps watch
-//   South      : the road to the Plains (@ = exit, & = where you arrive back)
+//   South      : the road to the Plains
 //
 // Each character is one tile (see data/tiles.js). Numbers are villagers,
 // C is a chicken, P is where the hero starts. Edit freely!
 // ===========================================================================
+// OPEN WORLD: this area is one 64x48 piece of the big seamless world.
+// Where it sits is set in data/world.js. Its edges are open: walk off any
+// side and you're in the next area. Roads (=) link up with the neighbours.
 DBG.addMap("village", {
   "name": "Little Givington",
 
@@ -24,54 +27,59 @@ DBG.addMap("village", {
     "5": { "npc": "reginald" },
     "6": { "npc": "mayor" },
     "C": { "spawn": "pen_chicken" },
-    "@": { "name": "Road south", "art": "path", "exit": "plains", "arrive": "fromVillage" },
     "&": { "arrival": "fromPlains" },
     "!": { "name": "Signpost", "art": "signpost", "solid": true, "object": true, "ground": ".",
            "sign": "SOUTH: The Plains. Slimes, geese and boars. Great place to farm loot!" }
   },
 
   "grid": `
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-TT........................................................TT
-TT........................................................TT
-TT..YYYYYY..;;;;;;;;.B....................KKKKKKKK........TT
-TT..YYYYYY..;;;;;;;;.......,.,........T,..KKKKKKKK........TT
-TT..YYYYYY..;;;;;;;;,....T...........,....KKKKKKKK........TT
-TT..HW+WHH..;;;;;;;;......................###+####........TT
-TT....=====.;;;;;;;;....T,..........T...ccccccccccbc...T..TT
-TT.......1=.;;;;;;;;....................ccc***cccccb......TT
-TT.ffffff.=.;;;;;;;;......RRRRRRRR......ccc***ccaccc....,.TT
-TT.fh..Cf.=...........,...RRRRRRRR......ccccccc4cccc......TT
-TT.f.C....=...............RRRRRRRR.B....cxcccccccccc......TT
-TT.f..C.f.=...............HWH+HWWH...........=......,.T...TT
-TT.ffffff.=.................ccc.......========.......r....TT
-TT........============cccccccccccccccc...,................TT
-TT...,...,...RRRRRR...cbccccccccccccbc...B................TT
-TT....,......RRRRRR..,cccccccccccc$ccc........,...........TT
-TT...T.......RRRRRR...cccccccccccccccc....................TT
-TT...........HW+HWH...cccccccOOccccccc..........sss~sss...TT
-TT..........,..=======cccccccOOccccccc........ss~~~~~~~ss.TT
-TT..........,,,.2,,,..cccccccccccccccc.......ss~~~~~~~~~ssTT
-TT.....T..............ccccccc6cccccccc======_____5~~~~~~~sTT
-TT....................cccccccccccccccc......s~~~~~~~~~~~~~TT
-TT....................cxccccccccccccbc......s~~~~~~~~~~~~~TT
-TT......,.......B.....cccccccccccccccc......s~~~~~~~~~~~~~TT
-TT......................r....==.............s~~~~~~~~~~~~~TT
-TT..T........................P=........,....s~~~~~~~~~~~~~TT
-TT.................YYYYYY....==....D.........s~~~~~~~~~~~sTT
-TT.................YYYYYY....==..............ss~~~~~~~~~ssTT
-TT.......T.........YYYYYY....==......B........ss~~~~~~~ss.TT
-TT.................HW+WHH....==.................sss~sss...TT
-TT...................==========...........................TT
-TT..B................3.......==...T.......................TT
-TT.......,...................==...........................TT
-TT......%%%%%%%%%%%%%%%%%%...==...........................TT
-TT....,.%%%%%%%%%%%%%%%%%%...==..,......T...........T.....TT
-TT..,..,...roo.......,.......&=.!.........................TT
-TT...,T,.,..oo...B...........==.....r.........T.......,.T.TT
-TT......,.....r..............==,..........,...............TT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTf@@fTTTTTTTTTTTTTTTTTTTTTTTTTTTT
-TTTTTTTTTTTTTTTTTTTTTTTTTTTTT@@TTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+.......T......................,.............T...................
+....,.....................r..............,,.............,......T
+....,.......,.....,...................................T......,..
+,...,...................T.......................................
+................................................................
+.T...........................................................T..
+...T..YYYYYY..;;;;;;;;.B....................KKKKKKKK............
+......YYYYYY..;;;;;;;;.......,.,........T,..KKKKKKKK............
+......YYYYYY..;;;;;;;;,....T...........,....KKKKKKKK............
+......HW+WHH..;;;;;;;;......................###+####........T...
+........=====.;;;;;;;;....T,..........T...ccccccccccbc...T......
+...,.......1=.;;;;;;;;....................ccc***cccccb..........
+..,..ffffff.=.;;;;;;;;......RRRRRRRR......ccc***ccaccc....,....T
+.....fh..Cf.=...........,...RRRRRRRR......ccccccc4cccc..........
+.....f.C....=...............RRRRRRRR.B....cxcccccccccc........T.
+T..B.f..C.f.=...............HWH+HWWH...........=......,.T.......
+.....ffffff.=.................ccc.......========.......r.......B
+B...........============cccccccccccccccc...,................,...
+.......,...,...RRRRRR...cbccccccccccccbc...B....................
+r.......,......RRRRRR..,cccccccccccc$ccc........,...............
+,......T.......RRRRRR...cccccccccccccccc........................
+...............HW+HWH...cccccccOOccccccc..........sss~sss...T..T
+T.............,..=======cccccccOOccccccc........ss~~~~~~~ss....,
+..............,,,.2,,,..cccccccccccccccc.......ss~~~~~~~~~ss....
+.........T..............ccccccc6cccccccc======_____5~~~~~~~s....
+........................cccccccccccccccc......s~~~~~~~~~~~~~....
+........................cxccccccccccccbc......s~~~~~~~~~~~~~....
+...r......,.......B.....cccccccccccccccc......s~~~~~~~~~~~~~....
+...,......................r....==.............s~~~~~~~~~~~~~....
+.T....T........................P=........,....s~~~~~~~~~~~~~....
+.....................YYYYYY....==....D.........s~~~~~~~~~~~s,...
+..,..................YYYYYY....==..............ss~~~~~~~~~ss.,..
+T..........T.........YYYYYY....==......B........ss~~~~~~~ss.....
+.....................HW+WHH....==.................sss~sss.......
+.......................==========...............................
+......B................3.......==...T...........................
+..T........,...................==...............................
+..........%%%%%%%%%%%%%%%%%%...==...............................
+........,.%%%%%%%%%%%%%%%%%%...==..,......T...........T.....r.,.
+......,..,...roo.......,.......&=.!.............................
+.......,T,.,..oo...B...........==.....r.........T.......,.T..T..
+..T.......,.....r..............==,..........,...................
+...........r...................==.............................,.
+.......T..,...T.....,........,.==........................,,....T
+.....B.........,T..........,...==..B.,..........................
+,.........r..........B......T..==....T.........,.......,........
+.T...,.........................==.......T.................,....T
 `
 });

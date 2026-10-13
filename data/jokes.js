@@ -171,6 +171,8 @@ DBG.data.jokes = {
   // ---- The wider world (Milestone 8) -------------------------------------
   "waystoneOn": "The waystone glows. {place} is now a fast-travel spot!",
   "travelTitle": "Waystone Travel",
+  "worldMapTitle": "The World (it's all open. Go anywhere.)",
+  "worldMapYou": "you (still alive)",
   "travelHint": "Touch more waystones to unlock more places.",
 
   // Crafting at the forge ({item}, {name} = the smith)

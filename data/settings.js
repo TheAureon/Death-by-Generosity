@@ -21,6 +21,8 @@ DBG.data.settings = {
   // Sound volume, from 0 (silent) to 1 (loud). Press M in the game to mute.
   "soundVolume": 0.5,
 
-  // Which map to load when the game starts (file name in data/maps/).
-  "startMap": "village"
+  // Which map to load when the game starts. "world" is the whole open world
+  // (see data/world.js). You can also name a single map from data/maps/,
+  // e.g. "test_meadow".
+  "startMap": "world"
 };

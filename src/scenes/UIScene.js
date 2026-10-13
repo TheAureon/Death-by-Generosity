@@ -2,7 +2,7 @@
 // UIScene: everything drawn on top of the world (not zoomed, not moving):
 // health bar, area banner, controls hint, message box, character sheet,
 // inventory / gift menu, talk menu, gifted-to-death tally, journal (save/load),
-// and the two gags (broken Esc, Save & Exit that never works).
+// world map, and the two gags (broken Esc, Save & Exit that never works).
 // The pieces live in src/ui/.
 // ---------------------------------------------------------------------------
 DBG.Scenes.UIScene = class UIScene extends Phaser.Scene {
@@ -20,6 +20,7 @@ DBG.Scenes.UIScene = class UIScene extends Phaser.Scene {
     this.tally = new DBG.UI.Tally(this);
     this.journal = new DBG.UI.JournalMenu(this);
     this.travelMenu = new DBG.UI.TravelMenu(this);
+    this.worldMap = new DBG.UI.WorldMap(this);
 
     // Little "Saved" note in the corner whenever the game saves
     this.savedNote = DBG.UI.outlinedText(this, 0, 0, "✓ Saved", 14).setOrigin(1, 1).setAlpha(0).setDepth(990);
@@ -35,7 +36,7 @@ DBG.Scenes.UIScene = class UIScene extends Phaser.Scene {
 
     this.banner = DBG.UI.outlinedText(this, 0, 120, "", 32).setOrigin(0.5, 0).setAlpha(0);
     this.hint = DBG.UI.outlinedText(this, 16, 0,
-      "WASD: Move  E: Talk  F: Attack (don't)  I: Bag  J: Journal  C: Character  K: Punch self  M: Sound  Esc: Pause (allegedly)", 14)
+      "WASD: Move  E: Talk  F: Attack (don't)  I: Bag  J: Journal  N: Map  C: Character  K: Punch self  M: Sound  Esc: Pause (allegedly)", 14)
       .setOrigin(0, 1).setAlpha(0.85);
 
     this.layout();
